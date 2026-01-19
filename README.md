@@ -1,50 +1,31 @@
-# Welcome to your Expo app 👋
+# Clerify
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+**Clerify** is an intelligent document analysis tool designed to help you understand contracts and legal documents instantly. Powered by Google Gemini AI, it scans your documents for risks, red flags, and provides clear, actionable summaries.
 
-## Get started
+## Features
 
-1. Install dependencies
+- **AI-Powered Analysis**: Instantly analyze contracts for hidden risks and unfair terms.
+- **Risk Scoring**: Get a clear 0-100 safety score with categorized risk levels (Safe, Moderate, Critical).
+- **Red Flag Detection**: Detailed breakdown of concerning clauses with severity ratings.
+- **Multi-Format Support**: Upload PDFs, Images (JPG/PNG), or paste text directly.
+- **Scan History**: Keep track of your previous analyses with persistent history.
+- **PDF Reports**: Generate and share professional analysis reports.
+- **Privacy Focused**: Your documents are processed securely.
 
-   ```bash
-   npm install
-   ```
+## Tech Stack
 
-2. Start the app
+- **Framework**: React Native with Expo (SDK 54)
+- **Navigation**: Expo Router
+- **AI Engine**: Google Gemini API
+- **Storage**: AsyncStorage
+- **Styling**: Custom StyleSheet
+- **PDF Generation**: Expo Print & Sharing
 
-   ```bash
-   npx expo start
-   ```
 
-In the output, you'll find options to open the app in a
+## Data Privacy
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+We prioritize your confidentiality. **The developers of Clerify do not have access to any documents you upload or analyze.** All data is processed securely and is ephemeral; files are transmitted directly to the AI engine for the sole purpose of analysis and are not stored, viewed, or retained by us.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Disclaimer
 
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Clerify uses AI to analyze text and does not provide legal advice. Always consult with a qualified attorney for professional contract review.
