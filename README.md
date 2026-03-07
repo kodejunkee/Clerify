@@ -1,6 +1,6 @@
-# Clerify
+# Contract Guardian
 
-**Clerify** is an intelligent document analysis tool designed to help you understand contracts and legal documents instantly. Powered by Google Gemini AI, it scans your documents for risks, red flags, and provides clear, actionable summaries.
+**Contract Guardian** is an intelligent document analysis tool designed to help you understand contracts and legal documents instantly. Powered by Google Gemini AI, it scans your documents for risks, red flags, and provides clear, actionable summaries.
 
 ## Features
 
@@ -24,8 +24,8 @@
 
 ## Data Privacy
 
-We prioritize your confidentiality. **The developers of Clerify do not have access to any documents you upload or analyze.** All data is processed securely and is ephemeral; files are transmitted directly to the AI engine for the sole purpose of analysis and are not stored, viewed, or retained by us.
+We prioritize your confidentiality. **The developer of Contract Guardian does not have access to any documents you upload or analyze.** All data is processed securely and is ephemeral; files are transmitted directly to the AI engine for the sole purpose of analysis and are not stored, viewed, or retained by us.
 
 ## Disclaimer
 
-Clerify uses AI to analyze text and does not provide legal advice. Always consult with a qualified attorney for professional contract review.
+Contract Guardian uses AI to analyze text and does not provide legal advice. Always consult with a qualified attorney for professional contract review.
