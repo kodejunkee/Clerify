@@ -11,8 +11,8 @@ export interface PickedDocument {
  * Opens the system document picker to select a PDF file.
  * Returns the selected file details or null if canceled/error.
  */
-// 15MB Limit in bytes
-const MAX_FILE_SIZE = 15 * 1024 * 1024;
+// 10MB Limit in bytes
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 export const pickDocument = async (): Promise<PickedDocument | null> => {
     try {

@@ -3,8 +3,17 @@ import { Config } from "../constants/Config";
 
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(Config.GEMINI_API_KEY);
-// Note: Can be switched to "gemini-1.5-flash" if 2.0 hits rate limits again.
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+// Timeout helper — rejects after the given ms
+const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> => {
+    return Promise.race([
+        promise,
+        new Promise<T>((_, reject) =>
+            setTimeout(() => reject(new Error('TIMEOUT')), ms)
+        ),
+    ]);
+};
 
 export interface AnalysisResult {
     score: number;
@@ -50,17 +59,23 @@ export const analyzeContract = async (text: string): Promise<AnalysisResult> => 
     try {
         const prompt = `${SYSTEM_PROMPT}\n\nContract Text:\n${text.substring(0, 30000)}`;
 
-        const result = await model.generateContent({
-            contents: [{ role: "user", parts: [{ text: prompt }] }],
-            generationConfig: GENERATION_CONFIG,
-        });
+        const result = await withTimeout(
+            model.generateContent({
+                contents: [{ role: "user", parts: [{ text: prompt }] }],
+                generationConfig: GENERATION_CONFIG,
+            }),
+            30000
+        );
 
         const response = result.response;
         const textResponse = response.text();
 
         return parseResponse(textResponse);
 
-    } catch (error) {
+    } catch (error: any) {
+        if (error?.message === 'TIMEOUT') {
+            throw new Error('TIMEOUT');
+        }
         console.error("Analysis Failed:", error);
         throw error;
     }
@@ -68,29 +83,35 @@ export const analyzeContract = async (text: string): Promise<AnalysisResult> => 
 
 export const analyzeContractFromFile = async (base64Data: string, mimeType: string = "application/pdf"): Promise<AnalysisResult> => {
     try {
-        const result = await model.generateContent({
-            contents: [
-                {
-                    role: "user",
-                    parts: [
-                        { text: SYSTEM_PROMPT },
-                        {
-                            inlineData: {
-                                mimeType: mimeType,
-                                data: base64Data
+        const result = await withTimeout(
+            model.generateContent({
+                contents: [
+                    {
+                        role: "user",
+                        parts: [
+                            { text: SYSTEM_PROMPT },
+                            {
+                                inlineData: {
+                                    mimeType: mimeType,
+                                    data: base64Data
+                                }
                             }
-                        }
-                    ]
-                }
-            ],
-            generationConfig: GENERATION_CONFIG,
-        });
+                        ]
+                    }
+                ],
+                generationConfig: GENERATION_CONFIG,
+            }),
+            30000
+        );
 
         const response = result.response;
         const textResponse = response.text();
 
         return parseResponse(textResponse);
-    } catch (error) {
+    } catch (error: any) {
+        if (error?.message === 'TIMEOUT') {
+            throw new Error('TIMEOUT');
+        }
         console.error("File Analysis Failed:", error);
         throw error;
     }
