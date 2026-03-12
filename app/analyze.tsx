@@ -157,7 +157,7 @@ export default function AnalyzeScreen() {
                 >
                     {/* ═══ Shared Gradient Hero Banner ═══ */}
                     <LinearGradient
-                        colors={['#4F46E5', '#6366F1', '#818CF8']}
+                        colors={Colors.gradientHeader}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 1 }}
                         style={styles.heroBanner}
@@ -185,7 +185,7 @@ export default function AnalyzeScreen() {
                                             <MaterialCommunityIcons
                                                 name={step.icon}
                                                 size={18}
-                                                color={i === 0 ? '#4F46E5' : 'rgba(255,255,255,0.6)'}
+                                                color={i === 0 ? Colors.textOnPrimary : 'rgba(255,255,255,0.4)'}
                                             />
                                         </View>
                                         <Text style={[
@@ -252,7 +252,7 @@ export default function AnalyzeScreen() {
                                         >
                                             <View style={styles.uploadIconOuter}>
                                                 <LinearGradient
-                                                    colors={['#EEF2FF', '#E0E7FF']}
+                                                    colors={['#1C1C1E', '#161618']}
                                                     style={styles.uploadIconInner}
                                                 >
                                                     <MaterialCommunityIcons name="cloud-upload-outline" size={32} color={Colors.primary} />
@@ -299,7 +299,7 @@ export default function AnalyzeScreen() {
                                                 style={{ opacity: isAnalyzing ? 0.6 : 1 }}
                                             >
                                                 <LinearGradient
-                                                    colors={['#4F46E5', '#6366F1']}
+                                                    colors={Colors.gradientPrimary}
                                                     start={{ x: 0, y: 0 }}
                                                     end={{ x: 1, y: 0 }}
                                                     style={styles.analyzeCTA}
@@ -311,7 +311,7 @@ export default function AnalyzeScreen() {
                                                         </View>
                                                     ) : (
                                                         <View style={styles.analyzingRow}>
-                                                            <MaterialCommunityIcons name="shield-search" size={20} color={Colors.white} style={{ marginRight: 10 }} />
+                                                            <MaterialCommunityIcons name="shield-search" size={20} color={Colors.textOnPrimary} style={{ marginRight: 10 }} />
                                                             <Text style={styles.analyzeCTAText}>Analyze Contract</Text>
                                                         </View>
                                                     )}
@@ -332,10 +332,11 @@ export default function AnalyzeScreen() {
                                     value={text}
                                     onChangeText={setText}
                                     textAlignVertical="top"
+                                    maxLength={10000}
                                 />
 
                                 <View style={styles.pasteFooter}>
-                                    <Text style={styles.charCount}>{text.length} characters</Text>
+                                    <Text style={styles.charCount}>{text.length}/10000 characters</Text>
                                     <Animated.View style={{ transform: [{ scale: analyzeScale }] }}>
                                         <Pressable
                                             onPressIn={() => animatePressIn(analyzeScale)}
@@ -345,16 +346,16 @@ export default function AnalyzeScreen() {
                                             style={{ opacity: (!text.trim() || isAnalyzing) ? 0.5 : 1 }}
                                         >
                                             <LinearGradient
-                                                colors={['#4F46E5', '#6366F1']}
+                                                colors={Colors.gradientPrimary}
                                                 start={{ x: 0, y: 0 }}
                                                 end={{ x: 1, y: 0 }}
                                                 style={styles.pasteAnalyzeBtn}
                                             >
                                                 {isAnalyzing ? (
-                                                    <ActivityIndicator color={Colors.white} size="small" />
+                                                    <ActivityIndicator color={Colors.textOnPrimary} size="small" />
                                                 ) : (
                                                     <>
-                                                        <MaterialCommunityIcons name="shield-search" size={18} color={Colors.white} style={{ marginRight: 8 }} />
+                                                        <MaterialCommunityIcons name="shield-search" size={18} color={Colors.textOnPrimary} style={{ marginRight: 8 }} />
                                                         <Text style={styles.pasteAnalyzeBtnText}>Analyze</Text>
                                                     </>
                                                 )}
@@ -440,6 +441,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: Spacing.xl,
         borderBottomLeftRadius: 32,
         borderBottomRightRadius: 32,
+        borderBottomWidth: 1.5,
+        borderBottomColor: Colors.primary,
     },
     backButton: {
         position: 'absolute',
@@ -456,7 +459,7 @@ const styles = StyleSheet.create({
     heroTitle: {
         fontFamily: 'Inter_700Bold',
         fontSize: 26,
-        color: Colors.white,
+        color: Colors.text,
         marginTop: 28,
         marginBottom: 8,
     },
@@ -488,7 +491,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     stepCircleActive: {
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.primary,
     },
     stepLabel: {
         fontFamily: 'Inter_500Medium',
@@ -496,7 +499,7 @@ const styles = StyleSheet.create({
         color: 'rgba(255,255,255,0.6)',
     },
     stepLabelActive: {
-        color: Colors.white,
+        color: Colors.primary,
         fontFamily: 'Inter_600SemiBold',
     },
     stepConnector: {
@@ -537,7 +540,7 @@ const styles = StyleSheet.create({
         borderRadius: Radius.sm + 2,
     },
     tabActive: {
-        backgroundColor: Colors.surface,
+        backgroundColor: Colors.surfaceElevated,
         ...Shadows.sm,
     },
     tabText: {
@@ -552,13 +555,13 @@ const styles = StyleSheet.create({
     // ─ Upload Zone ─
     uploadZone: {
         borderWidth: 2,
-        borderColor: '#D4D4F7',
+        borderColor: Colors.border,
         borderStyle: 'dashed',
         borderRadius: Radius.xl,
         paddingVertical: 36,
         paddingHorizontal: Spacing.xl,
         alignItems: 'center',
-        backgroundColor: '#FAFAFF',
+        backgroundColor: Colors.surfaceElevated,
     },
     uploadIconOuter: {
         marginBottom: Spacing.base,
@@ -571,6 +574,9 @@ const styles = StyleSheet.create({
         borderRadius: 36,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: Colors.surface,
+        borderWidth: 1,
+        borderColor: Colors.border,
     },
     uploadTitle: {
         fontFamily: 'Inter_600SemiBold',
@@ -588,10 +594,12 @@ const styles = StyleSheet.create({
     browseChip: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#EEF2FF',
+        backgroundColor: Colors.surface,
         paddingVertical: 8,
         paddingHorizontal: 16,
         borderRadius: Radius.full,
+        borderWidth: 1,
+        borderColor: Colors.border,
     },
     browseChipText: {
         fontFamily: 'Inter_600SemiBold',
@@ -628,17 +636,18 @@ const styles = StyleSheet.create({
     fileName: {
         fontFamily: 'Inter_600SemiBold',
         fontSize: 14,
-        color: Colors.white,
+        color: Colors.textOnPrimary,
         marginBottom: 3,
     },
     fileSize: {
         fontFamily: 'Inter_400Regular',
         fontSize: 12,
-        color: 'rgba(255,255,255,0.75)',
+        color: Colors.textOnPrimary,
+        opacity: 0.8,
     },
     fileRemove: {
         padding: 8,
-        backgroundColor: 'rgba(255,255,255,0.2)',
+        backgroundColor: 'rgba(0,0,0,0.1)',
         borderRadius: Radius.full,
     },
 
@@ -660,7 +669,7 @@ const styles = StyleSheet.create({
 
     // ─ Paste Content ─
     pasteInput: {
-        backgroundColor: '#FAFAFF',
+        backgroundColor: Colors.surfaceElevated,
         borderRadius: Radius.lg,
         padding: Spacing.base,
         fontFamily: 'Inter_400Regular',
@@ -669,7 +678,7 @@ const styles = StyleSheet.create({
         color: Colors.text,
         textAlignVertical: 'top',
         borderWidth: 1.5,
-        borderColor: '#D4D4F7',
+        borderColor: Colors.border,
         minHeight: 200,
     },
     pasteFooter: {

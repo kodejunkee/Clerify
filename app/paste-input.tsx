@@ -45,10 +45,11 @@ export default function PasteInputScreen() {
         <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
             <Stack.Screen
                 options={{
-                    title: 'Paste Contract Text',
+                    title: 'Paste Text',
                     headerStyle: { backgroundColor: Colors.background },
                     headerTintColor: Colors.primary,
                     headerTitleStyle: { fontFamily: 'Inter_600SemiBold', fontSize: 18, color: Colors.text },
+                    headerShadowVisible: false,
                 }}
             />
 
@@ -69,12 +70,13 @@ export default function PasteInputScreen() {
                             onChangeText={setText}
                             textAlignVertical="top"
                             autoFocus
+                            maxLength={10000}
                         />
                     </View>
                 </ScrollView>
 
                 <View style={styles.footer}>
-                    <Text style={styles.charCount}>{text.length} characters</Text>
+                    <Text style={styles.charCount}>{text.length}/10000 characters</Text>
                     <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
                         <Pressable
                             onPressIn={animatePressIn}
@@ -90,10 +92,10 @@ export default function PasteInputScreen() {
                                 style={styles.analyzeButton}
                             >
                                 {analyzing ? (
-                                    <ActivityIndicator color={Colors.white} />
+                                    <ActivityIndicator color={Colors.textOnPrimary} />
                                 ) : (
                                     <>
-                                        <MaterialCommunityIcons name="shield-search" size={20} color={Colors.white} style={{ marginRight: 8 }} />
+                                        <MaterialCommunityIcons name="shield-search" size={20} color={Colors.textOnPrimary} style={{ marginRight: 8 }} />
                                         <Text style={styles.analyzeButtonText}>Analyze Risk</Text>
                                     </>
                                 )}
@@ -124,7 +126,7 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         flex: 1,
-        backgroundColor: Colors.surface,
+        backgroundColor: Colors.surfaceElevated,
         borderRadius: Radius.lg,
         borderWidth: 1,
         borderColor: Colors.border,
@@ -159,5 +161,6 @@ const styles = StyleSheet.create({
     },
     analyzeButtonText: {
         ...Typography.buttonSm,
+        color: Colors.textOnPrimary,
     },
 });

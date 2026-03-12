@@ -49,6 +49,15 @@
         "typedRoutes": true,
         "reactCompiler": true
       }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d75ed637-4290-44b4-bf87-5ab0c69c6054"
+      }
+    },
+    "owner": "kode_junkee",
+    "android": {
+      "package": "com.contractguardian"
     }
   }
 }

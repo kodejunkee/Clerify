@@ -6,14 +6,14 @@ export const generateContractPDF = async (result: AnalysisResult) => {
     try {
         const { score, summary, redFlags } = result;
 
-        const riskColor = score > 75 ? '#DC2626' : score > 40 ? '#D69E2E' : '#16A34A';
+        const riskColor = score > 75 ? '#991B1B' : score > 40 ? '#B45309' : '#065F46';
         const riskLabel = score > 75 ? 'Critical Risk' : score > 40 ? 'Moderate Risk' : 'Safe';
 
         // Build Red Flags List HTML
         const redFlagsHtml = redFlags.map(flag => {
-            const severity = flag.severity || 'minor';
-            const color = severity === 'critical' ? '#DC2626' : severity === 'moderate' ? '#D97706' : '#2563EB'; // Blue for minor
-            const bg = severity === 'critical' ? '#FEF2F2' : severity === 'moderate' ? '#FFFBEB' : '#EFF6FF'; // Light Blue for minor
+            const severity = flag.severity || 'low';
+            const color = severity === 'critical' ? '#EF4444' : severity === 'moderate' ? '#F59E0B' : '#C5A059'; 
+            const bg = severity === 'critical' ? 'rgba(239, 68, 68, 0.05)' : severity === 'moderate' ? 'rgba(245, 158, 11, 0.05)' : 'rgba(197, 160, 89, 0.05)'; 
 
             return `
                 <div class="flag-card" style="background-color: ${bg}; border-left: 4px solid ${color};">

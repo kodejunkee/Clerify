@@ -60,10 +60,10 @@ export default function AnalysisResultScreen() {
 
     // Hero gradient colors based on risk
     const heroColors = score > 75
-        ? ['#9F1239', '#BE123C', '#E11D48'] as [string, string, string]
+        ? ['#7F1D1D', '#991B1B', '#B91C1C'] as [string, string, string] // Deeper Red
         : score > 40
-        ? ['#92400E', '#B45309', '#D97706'] as [string, string, string]
-        : ['#065F46', '#059669', '#10B981'] as [string, string, string];
+        ? ['#78350F', '#92400E', '#B45309'] as [string, string, string] // Deeper Amber
+        : ['#064E3B', '#065F46', '#059669'] as [string, string, string] // Deeper Emerald
 
     const criticalCount = redFlags.filter((f: any) => f.severity === 'critical').length;
     const moderateCount = redFlags.filter((f: any) => f.severity === 'moderate').length;
@@ -149,8 +149,8 @@ export default function AnalysisResultScreen() {
                 {/* ═══ Red Flags Section ═══ */}
                 <View style={styles.section}>
                     <View style={styles.sectionTitleRow}>
-                        <View style={[styles.sectionIconBox, { backgroundColor: '#FFF1F2' }]}>
-                            <MaterialCommunityIcons name="flag-outline" size={16} color="#BE123C" />
+                        <View style={[styles.sectionIconBox, { backgroundColor: 'rgba(239, 68, 68, 0.15)' }]}>
+                            <MaterialCommunityIcons name="flag-outline" size={16} color="#EF4444" />
                         </View>
                         <Text style={styles.sectionTitle}>Red Flags</Text>
                         <View style={styles.flagCountBadge}>
@@ -210,12 +210,12 @@ export default function AnalysisResultScreen() {
                         onPress={() => generateContractPDF(result)}
                     >
                         <LinearGradient
-                            colors={['#4F46E5', '#6366F1']}
+                            colors={Colors.gradientPrimary}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0 }}
                             style={styles.pdfButtonGradient}
                         >
-                            <MaterialCommunityIcons name="file-download-outline" size={20} color={Colors.white} style={{ marginRight: 10 }} />
+                            <MaterialCommunityIcons name="file-download-outline" size={20} color={Colors.textOnPrimary} style={{ marginRight: 10 }} />
                             <Text style={styles.pdfButtonText}>Download as PDF</Text>
                         </LinearGradient>
                     </Pressable>
@@ -257,6 +257,8 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: 32,
         borderBottomRightRadius: 32,
         alignItems: 'center',
+        borderBottomWidth: 1.5,
+        borderBottomColor: Colors.primary,
     },
     backButton: {
         position: 'absolute',
@@ -301,7 +303,7 @@ const styles = StyleSheet.create({
     scoreValue: {
         fontFamily: 'Inter_700Bold',
         fontSize: 48,
-        color: Colors.white,
+        color: Colors.text,
     },
     scoreMax: {
         fontFamily: 'Inter_400Regular',
@@ -380,7 +382,7 @@ const styles = StyleSheet.create({
         width: 32,
         height: 32,
         borderRadius: 10,
-        backgroundColor: '#EEF2FF',
+        backgroundColor: Colors.surfaceElevated,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -401,7 +403,7 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
         ...Shadows.sm,
         borderWidth: 1,
-        borderColor: '#F1F5F9',
+        borderColor: Colors.border,
     },
     summaryAccent: {
         position: 'absolute',
@@ -427,7 +429,7 @@ const styles = StyleSheet.create({
     flagCountText: {
         fontFamily: 'Inter_700Bold',
         fontSize: 13,
-        color: '#BE123C',
+        color: '#EF4444',
     },
 
     // ─ Flag Card ─
@@ -440,7 +442,7 @@ const styles = StyleSheet.create({
         borderLeftColor: '#BE123C',
         ...Shadows.sm,
         borderWidth: 1,
-        borderColor: '#F1F5F9',
+        borderColor: Colors.border,
     },
     flagHeader: {
         flexDirection: 'row',
@@ -493,7 +495,7 @@ const styles = StyleSheet.create({
         width: 64,
         height: 64,
         borderRadius: 32,
-        backgroundColor: '#ECFDF5',
+        backgroundColor: 'rgba(16, 185, 129, 0.15)',
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: Spacing.md,
@@ -537,15 +539,16 @@ const styles = StyleSheet.create({
     },
     pdfButtonText: {
         ...Typography.button,
+        color: Colors.textOnPrimary,
     },
     newScanButton: {
         width: 52,
         height: 52,
         borderRadius: Radius.lg,
-        backgroundColor: '#EEF2FF',
+        backgroundColor: Colors.surfaceElevated,
         alignItems: 'center',
         justifyContent: 'center',
         borderWidth: 1,
-        borderColor: '#D4D4F7',
+        borderColor: Colors.border,
     },
 });

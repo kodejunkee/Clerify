@@ -5,6 +5,8 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { Colors } from "../constants/Colors";
 
+import { StatusBar } from "expo-status-bar";
+
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -27,6 +29,7 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
+      <StatusBar style="light" />
       <Stack
         screenOptions={{
           headerStyle: { backgroundColor: Colors.surface },

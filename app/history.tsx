@@ -94,7 +94,7 @@ export default function HistoryScreen() {
 
             {/* ═══ Gradient Hero Header ═══ */}
             <LinearGradient
-                colors={['#4F46E5', '#6366F1', '#818CF8']}
+                colors={Colors.gradientHeader}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.heroHeader}
@@ -120,7 +120,7 @@ export default function HistoryScreen() {
             <View style={styles.statsCardWrapper}>
                 <View style={styles.statsCard}>
                     <View style={styles.statItem}>
-                        <View style={[styles.statIconBox, { backgroundColor: '#EEF2FF' }]}>
+                        <View style={[styles.statIconBox, { backgroundColor: '#1C1C1E' }]}>
                             <MaterialCommunityIcons name="file-multiple-outline" size={20} color={Colors.primary} />
                         </View>
                         <View>
@@ -132,8 +132,8 @@ export default function HistoryScreen() {
                     <View style={styles.statDivider} />
                     
                     <View style={styles.statItem}>
-                        <View style={[styles.statIconBox, { backgroundColor: '#F0FDF4' }]}>
-                            <MaterialCommunityIcons name="calendar-clock-outline" size={20} color="#16A34A" />
+                        <View style={[styles.statIconBox, { backgroundColor: 'rgba(16, 185, 129, 0.15)' }]}>
+                            <MaterialCommunityIcons name="calendar-clock-outline" size={20} color={Colors.success} />
                         </View>
                         <View>
                             <Text style={styles.statValue}>{historyStats.lastScan}</Text>
@@ -147,7 +147,7 @@ export default function HistoryScreen() {
                 <View style={styles.emptyContainer}>
                     <View style={styles.emptyIconCircle}>
                         <LinearGradient
-                            colors={['#F8FAFC', '#F1F5F9']}
+                            colors={['#1C1C1E', '#27272A']}
                             style={styles.emptyIconGradient}
                         >
                             <MaterialCommunityIcons name="file-search-outline" size={48} color={Colors.textMuted} />
@@ -161,7 +161,7 @@ export default function HistoryScreen() {
                         onPress={() => router.push('/analyze')}
                     >
                         <LinearGradient
-                            colors={['#4F46E5', '#6366F1']}
+                            colors={Colors.gradientPrimary}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0 }}
                             style={styles.analyzeNowGradient}
@@ -215,6 +215,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: Spacing.xl,
         borderBottomLeftRadius: 32,
         borderBottomRightRadius: 32,
+        borderBottomWidth: 1.5,
+        borderBottomColor: Colors.primary,
     },
     headerTopRow: {
         flexDirection: 'row',
@@ -234,7 +236,7 @@ const styles = StyleSheet.create({
     heroTitle: {
         fontFamily: 'Inter_700Bold',
         fontSize: 22,
-        color: Colors.white,
+        color: Colors.text,
     },
     clearHeaderButton: {
         width: 40,
@@ -378,6 +380,6 @@ const styles = StyleSheet.create({
     analyzeNowText: {
         fontFamily: 'Inter_600SemiBold',
         fontSize: 16,
-        color: Colors.white,
+        color: Colors.textOnPrimary,
     },
 });

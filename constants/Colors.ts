@@ -1,54 +1,55 @@
 export const Colors = {
-  // Primary Gradient Anchors
-  primary: '#6366F1',       // Indigo
-  primaryLight: '#818CF8',  // Lighter indigo
-  primaryDark: '#4F46E5',   // Deeper indigo
-  accent: '#3B82F6',        // Blue accent
-
-  // Gradient Definitions (start, end)
-  gradientPrimary: ['#6366F1', '#3B82F6'] as [string, string],
-  gradientSubtle: ['#EEF2FF', '#E0F2FE'] as [string, string],
-  gradientDark: ['#1E293B', '#0F172A'] as [string, string],
+  // Primary Luxury Gold / Champagne
+  primary: '#D4AF37',       // Brighter, richer gold
+  primaryLight: '#E5C76B',  
+  primaryDark: '#B8860B',   
+  accent: '#1C1C1E',        
+  
+  // Gradient Definitions
+  gradientPrimary: ['#D4AF37', '#B8860B'] as [string, string],
+  gradientSubtle: ['#1A1A1A', '#050505'] as [string, string],
+  gradientDark: ['#050505', '#121214'] as [string, string],
+  gradientHeader: ['#2A2A2E', '#050505'] as [string, string], // Lush dark metallic
   gradientLight: ['#FFFFFF', '#F8FAFC'] as [string, string],
 
   // Backgrounds
-  background: '#FAFBFC',     // Warm off-white
-  surface: '#FFFFFF',        // Card surfaces
-  surfaceElevated: '#FFFFFF',
-  surfaceSubtle: '#F8FAFC',  // Slightly tinted surface
-  tabBar: '#F1F5F9',         // Tab background
+  background: '#050505',     // Deep midnight black
+  surface: '#121214',        // Card surfaces
+  surfaceElevated: '#1E1E20', // Inputs / Elevated cards
+  surfaceSubtle: '#0A0A0B',  
+  tabBar: '#121214',         
 
   // Text
-  text: '#0F172A',           // Near-black slate
-  textSecondary: '#475569',  // Medium slate
-  textMuted: '#94A3B8',      // Muted / placeholder
-  textOnPrimary: '#FFFFFF',
+  text: '#F8FAFC',           
+  textSecondary: '#94A3B8',  
+  textMuted: '#64748B',      
+  textOnPrimary: '#050505',  
 
   // Borders & Dividers
-  border: '#E2E8F0',
-  borderLight: '#F1F5F9',
-  divider: '#F1F5F9',
+  border: '#2A2A2E',         
+  borderLight: '#1E1E20',
+  divider: '#1E1E20',
 
   // Semantic — Risk
-  success: '#10B981',        // Emerald
-  successBg: '#ECFDF5',
-  successBorder: '#A7F3D0',
+  success: '#10B981',        
+  successBg: 'rgba(16, 185, 129, 0.1)',
+  successBorder: 'rgba(16, 185, 129, 0.2)',
 
-  warning: '#F59E0B',        // Amber
-  warningBg: '#FFFBEB',
-  warningBorder: '#FDE68A',
+  warning: '#F59E0B',        
+  warningBg: 'rgba(245, 158, 11, 0.1)',
+  warningBorder: 'rgba(245, 158, 11, 0.2)',
 
-  danger: '#EF4444',         // Rose-red
-  dangerBg: '#FEF2F2',
-  dangerBorder: '#FECACA',
+  danger: '#EF4444',         
+  dangerBg: 'rgba(239, 68, 68, 0.1)',
+  dangerBorder: 'rgba(239, 68, 68, 0.2)',
 
-  info: '#3B82F6',
-  infoBg: '#EFF6FF',
-  infoBorder: '#BFDBFE',
+  info: '#D4AF37',
+  infoBg: '#121214',
+  infoBorder: '#B8860B',
 
   // Misc
   white: '#FFFFFF',
   black: '#000000',
-  overlay: 'rgba(15, 23, 42, 0.5)',
-  shadowColor: '#0F172A',
+  overlay: 'rgba(0, 0, 0, 0.8)',
+  shadowColor: '#000000',
 };

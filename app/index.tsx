@@ -28,11 +28,11 @@ export default function HomeScreen() {
           headerTitle: () => (
             <View style={styles.headerTitleContainer}>
               <Image
-                source={require('../assets/transparent-logo.png')}
+                source={require('../assets/icon.png')}
                 style={styles.headerLogo}
                 contentFit="contain"
               />
-              <Text style={styles.headerTitleText}>Clerify</Text>
+              <Text style={styles.headerTitleText}>Contract Guardian</Text>
             </View>
           ),
           headerTitleAlign: 'left',
@@ -41,38 +41,39 @@ export default function HomeScreen() {
           title: '',
         }}
       />
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
         {/* Hero Section */}
         <View style={styles.hero}>
-          {/* Glow effect behind the logo */}
-          <View style={styles.glowOuter}>
-            <LinearGradient
-              colors={['rgba(99, 102, 241, 0.15)', 'rgba(59, 130, 246, 0.08)', 'transparent']}
-              style={styles.glowGradient}
-              start={{ x: 0.5, y: 0 }}
-              end={{ x: 0.5, y: 1 }}
-            />
+          {/* Architectural Shield Backdrop */}
+          <View style={styles.shieldBackdrop}>
+            <View style={[styles.shieldRing, { width: 280, height: 280, transform: [{ rotate: '45deg' }] }]} />
+            <View style={[styles.shieldRing, { width: 220, height: 220, opacity: 0.15, transform: [{ rotate: '45deg' }] }]} />
+            <View style={styles.ambientSpotlight} />
           </View>
-          <View style={styles.iconContainer}>
+
+          <View style={styles.diamondContainer}>
             <LinearGradient
-              colors={Colors.gradientLight}
-              style={styles.iconGradient}
+              colors={Colors.gradientPrimary}
+              style={styles.diamondRim}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
             >
-              <Image
-                source={require('../assets/transparent-logo.png')}
-                style={styles.heroLogo}
-                contentFit="contain"
-              />
+              <View style={styles.diamondInner}>
+                <Image
+                  source={require('../assets/transparent-logo.png')}
+                  style={styles.heroLogo}
+                  contentFit="contain"
+                />
+              </View>
             </LinearGradient>
           </View>
+
           <Text style={styles.heroTitle}>Understand What{'\n'}You're Signing</Text>
           <Text style={styles.subtitle}>
-            Upload or paste legal text to get an instant{'\n'}Risk Score and Red Flag analysis.
+            Connect with transparency. Get an instant{'\n'}Risk Score and Red Flag analysis.
           </Text>
         </View>
 
@@ -92,7 +93,7 @@ export default function HomeScreen() {
                 end={{ x: 1, y: 0 }}
                 style={styles.ctaGradient}
               >
-                <MaterialCommunityIcons name="shield-search" size={22} color={Colors.white} style={{ marginRight: 10 }} />
+                <MaterialCommunityIcons name="shield-search" size={22} color={Colors.textOnPrimary} style={{ marginRight: 10 }} />
                 <Text style={styles.ctaText}>Analyze Document</Text>
               </LinearGradient>
             </Pressable>
@@ -160,44 +161,70 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Spacing['4xl'],
     position: 'relative',
-    paddingTop: 15,
+    paddingTop: 40,
   },
-  glowOuter: {
+  shieldBackdrop: {
     position: 'absolute',
-    top: -40,
-    width: 240,
-    height: 240,
-    borderRadius: 120,
-    overflow: 'hidden',
+    top: -20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    zIndex: -1,
   },
-  glowGradient: {
-    flex: 1,
+  shieldRing: {
+    position: 'absolute',
+    borderWidth: 1,
+    borderColor: Colors.primary,
+    opacity: 0.08,
+    borderRadius: Radius.lg,
   },
-  iconContainer: {
-    marginBottom: Spacing.xl,
+  ambientSpotlight: {
+    position: 'absolute',
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    backgroundColor: Colors.primary,
+    opacity: 0.03,
+  },
+  diamondContainer: {
+    width: 130,
+    height: 130,
+    transform: [{ rotate: '45deg' }],
+    marginBottom: 48,
     ...Shadows.xl,
   },
-  iconGradient: {
-    width: 120,
-    height: 120,
-    borderRadius: Radius['3xl'],
+  diamondRim: {
+    flex: 1,
+    padding: 2,
+    borderRadius: Radius.xl,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  diamondInner: {
+    flex: 1,
+    width: '100%',
+    backgroundColor: '#F8F9FA', // Soft pearl/off-white
+    borderRadius: Radius.xl - 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    transform: [{ rotate: '-45deg' }],
+  },
   heroLogo: {
-    width: 70,
-    height: 70,
+    width: 64,
+    height: 64,
   },
   heroTitle: {
     ...Typography.displaySm,
     textAlign: 'center',
     marginBottom: Spacing.md,
+    color: Colors.text,
   },
   subtitle: {
     ...Typography.body,
     color: Colors.textSecondary,
     textAlign: 'center',
     maxWidth: '85%',
+    lineHeight: 24,
   },
 
   // Actions
@@ -226,6 +253,7 @@ const styles = StyleSheet.create({
   },
   ctaText: {
     ...Typography.button,
+    color: Colors.textOnPrimary,
     letterSpacing: 0.3,
   },
   helperText: {
