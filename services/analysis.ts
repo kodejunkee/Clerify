@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import { Config } from "../constants/Config";
 
 // Initialize Gemini
@@ -26,6 +26,25 @@ const GENERATION_CONFIG = {
     temperature: 0.1,
     responseMimeType: "application/json",
 };
+
+const SAFETY_SETTINGS = [
+    {
+        category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+    },
+    {
+        category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+    },
+    {
+        category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+    },
+    {
+        category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+    },
+];
 
 // --- MODIFIED INSTRUCTIONS BELOW ---
 const SYSTEM_PROMPT = `
@@ -63,6 +82,7 @@ export const analyzeContract = async (text: string): Promise<AnalysisResult> => 
             model.generateContent({
                 contents: [{ role: "user", parts: [{ text: prompt }] }],
                 generationConfig: GENERATION_CONFIG,
+                safetySettings: SAFETY_SETTINGS,
             }),
             30000
         );
@@ -100,6 +120,7 @@ export const analyzeContractFromFile = async (base64Data: string, mimeType: stri
                     }
                 ],
                 generationConfig: GENERATION_CONFIG,
+                safetySettings: SAFETY_SETTINGS,
             }),
             30000
         );
