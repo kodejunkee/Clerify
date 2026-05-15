@@ -128,21 +128,11 @@ export default function AnalyzeScreen() {
         }
     };
 
-    // ─── Dynamic Steps Data ───
-    const steps = isUpload
-        ? [
-              { icon: 'file-upload-outline' as const, label: 'Upload' },
-              { icon: 'brain' as const, label: 'AI Scan' },
-              { icon: 'shield-check-outline' as const, label: 'Results' },
-          ]
-        : [
-              { icon: 'clipboard-text-outline' as const, label: 'Paste' },
-              { icon: 'brain' as const, label: 'AI Scan' },
-              { icon: 'shield-check-outline' as const, label: 'Results' },
-          ];
+    const currentActionName = isUpload ? 'UPLOAD' : 'PASTE';
+    const currentActionIcon = isUpload ? 'file-document' : 'file-document';
 
     return (
-        <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
+        <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom', 'top']}>
             <Stack.Screen options={{ headerShown: false }} />
 
             <KeyboardAvoidingView
@@ -155,64 +145,57 @@ export default function AnalyzeScreen() {
                     bounces={false}
                     keyboardShouldPersistTaps="handled"
                 >
-                    {/* ═══ Shared Gradient Hero Banner ═══ */}
-                    <LinearGradient
-                        colors={Colors.gradientHeader}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        style={styles.heroBanner}
-                    >
-                        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-                            <MaterialCommunityIcons name="arrow-left" size={24} color={Colors.white} />
+                    {/* Header Details */}
+                    <View style={styles.headerArea}>
+                        <TouchableOpacity style={{ marginBottom: 16 }} onPress={() => router.back()}>
+                            <MaterialCommunityIcons name="arrow-left" size={28} color="#000" />
                         </TouchableOpacity>
-
-                        <Text style={styles.heroTitle}>Analyze Document</Text>
-                        <Text style={styles.heroSubtitle}>
-                            {isUpload
-                                ? 'Upload a contract and let AI identify\nrisks and red flags for you.'
-                                : 'Paste or type your contract text\nand let AI scan it for risks.'}
+                        <Text style={styles.headerTitle}>Analyze Document</Text>
+                        <Text style={styles.headerSubtitle}>
+                            Upload a contract and let AI identify risks{'\n'}and red flags for you.
                         </Text>
+                    </View>
 
-                        {/* ─ Step Indicators ─ */}
-                        <View style={styles.stepsRow}>
-                            {steps.map((step, i) => (
-                                <React.Fragment key={step.label}>
-                                    <View style={styles.stepItem}>
-                                        <View style={[
-                                            styles.stepCircle,
-                                            i === 0 && styles.stepCircleActive,
-                                        ]}>
-                                            <MaterialCommunityIcons
-                                                name={step.icon}
-                                                size={18}
-                                                color={i === 0 ? Colors.textOnPrimary : 'rgba(255,255,255,0.4)'}
-                                            />
-                                        </View>
-                                        <Text style={[
-                                            styles.stepLabel,
-                                            i === 0 && styles.stepLabelActive,
-                                        ]}>{step.label}</Text>
-                                    </View>
-                                    {i < steps.length - 1 && (
-                                        <View style={styles.stepConnector} />
-                                    )}
-                                </React.Fragment>
-                            ))}
+                    {/* Stepper Component */}
+                    <View style={styles.stepperContainer}>
+                        <View style={styles.stepItem}>
+                            <View style={[styles.stepCircle, styles.stepCircleActive]}>
+                                <MaterialCommunityIcons name={currentActionIcon} size={20} color="#000" />
+                            </View>
+                            <Text style={[styles.stepLabel, styles.stepLabelActive]}>{currentActionName}</Text>
                         </View>
-                    </LinearGradient>
+                        
+                        <View style={styles.stepConnector} />
+                        
+                        <View style={styles.stepItem}>
+                            <View style={styles.stepCircle}>
+                                <MaterialCommunityIcons name="eye" size={20} color="#64748B" />
+                            </View>
+                            <Text style={styles.stepLabel}>AI SCAN</Text>
+                        </View>
 
-                    {/* ═══ Shared Floating Card ═══ */}
-                    <View style={styles.floatingCard}>
+                        <View style={styles.stepConnector} />
 
-                        {/* Shared Tab Switcher */}
-                        <View style={styles.tabBar}>
+                        <View style={styles.stepItem}>
+                            <View style={styles.stepCircle}>
+                                <MaterialCommunityIcons name="shield-check" size={20} color="#64748B" />
+                            </View>
+                            <Text style={styles.stepLabel}>RESULTS</Text>
+                        </View>
+                    </View>
+
+                    {/* ═══ Main Dark Navy Card ═══ */}
+                    <View style={styles.mainCard}>
+                        
+                        {/* Tab Switcher */}
+                        <View style={styles.tabContainer}>
                             <TouchableOpacity
-                                style={[styles.tab, isUpload && styles.tabActive]}
+                                style={[styles.tabButton, isUpload && styles.tabButtonActive]}
                                 onPress={() => setActiveTab('upload')}
                                 activeOpacity={0.7}
                             >
                                 <MaterialCommunityIcons
-                                    name="cloud-upload-outline"
+                                    name="upload"
                                     size={18}
                                     color={isUpload ? Colors.primary : Colors.textMuted}
                                     style={{ marginRight: 8 }}
@@ -222,7 +205,7 @@ export default function AnalyzeScreen() {
                                 </Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={[styles.tab, isPaste && styles.tabActive]}
+                                style={[styles.tabButton, isPaste && styles.tabButtonActive]}
                                 onPress={() => setActiveTab('paste')}
                                 activeOpacity={0.7}
                             >
@@ -238,56 +221,44 @@ export default function AnalyzeScreen() {
                             </TouchableOpacity>
                         </View>
 
-                        {/* ═══ Tab Content (ONLY THIS SWAPS) ═══ */}
+                        {/* ═══ Content Area ═══ */}
                         {isUpload ? (
-                            <>
-                                {/* Upload Zone */}
+                            /* Upload Zone */
+                            <View style={styles.uploadArea}>
                                 {!selectedFile ? (
-                                    <Animated.View style={{ transform: [{ scale: uploadScale }] }}>
+                                    <Animated.View style={{ transform: [{ scale: uploadScale }], width: '100%' }}>
                                         <Pressable
                                             onPressIn={() => animatePressIn(uploadScale)}
                                             onPressOut={() => animatePressOut(uploadScale)}
                                             onPress={handlePickFile}
-                                            style={styles.uploadZone}
+                                            style={styles.uploadZoneInner}
                                         >
                                             <View style={styles.uploadIconOuter}>
-                                                <LinearGradient
-                                                    colors={['#1C1C1E', '#161618']}
-                                                    style={styles.uploadIconInner}
-                                                >
-                                                    <MaterialCommunityIcons name="cloud-upload-outline" size={32} color={Colors.primary} />
-                                                </LinearGradient>
+                                                <MaterialCommunityIcons name="cloud-upload-outline" size={32} color={Colors.primary} />
                                             </View>
-                                            <Text style={styles.uploadTitle}>Tap to upload your document</Text>
+                                            <Text style={styles.uploadTitle}>Tap to upload{'\n'}document</Text>
                                             <Text style={styles.uploadFormats}>PDF, JPG, or PNG • Max 10MB</Text>
-                                            <View style={styles.browseChip}>
-                                                <MaterialCommunityIcons name="folder-open-outline" size={14} color={Colors.primary} style={{ marginRight: 6 }} />
-                                                <Text style={styles.browseChipText}>Browse files</Text>
+                                            <View style={styles.browseButton}>
+                                                <MaterialCommunityIcons name="folder" size={16} color={Colors.primary} style={{ marginRight: 8 }} />
+                                                <Text style={styles.browseButtonText}>Browse files</Text>
                                             </View>
                                         </Pressable>
                                     </Animated.View>
                                 ) : (
                                     <View style={styles.fileSection}>
                                         <View style={styles.selectedFile}>
-                                            <LinearGradient
-                                                colors={Colors.gradientPrimary}
-                                                start={{ x: 0, y: 0 }}
-                                                end={{ x: 1, y: 0 }}
-                                                style={styles.selectedFileGradient}
-                                            >
-                                                <View style={styles.fileIconBox}>
-                                                    <MaterialCommunityIcons name="file-check-outline" size={24} color={Colors.white} />
-                                                </View>
-                                                <View style={styles.fileDetails}>
-                                                    <Text style={styles.fileName} numberOfLines={1}>{selectedFile.name}</Text>
-                                                    <Text style={styles.fileSize}>
-                                                        {(selectedFile.size ? selectedFile.size / 1024 / 1024 : 0).toFixed(2)} MB • Ready to analyze
-                                                    </Text>
-                                                </View>
-                                                <TouchableOpacity onPress={() => setSelectedFile(null)} style={styles.fileRemove}>
-                                                    <MaterialCommunityIcons name="close" size={16} color={Colors.white} />
-                                                </TouchableOpacity>
-                                            </LinearGradient>
+                                            <View style={styles.fileIconBox}>
+                                                <MaterialCommunityIcons name="file-check-outline" size={24} color={Colors.white} />
+                                            </View>
+                                            <View style={styles.fileDetails}>
+                                                <Text style={styles.fileName} numberOfLines={1}>{selectedFile.name}</Text>
+                                                <Text style={styles.fileSize}>
+                                                    {(selectedFile.size ? selectedFile.size / 1024 / 1024 : 0).toFixed(2)} MB • Ready
+                                                </Text>
+                                            </View>
+                                            <TouchableOpacity onPress={() => setSelectedFile(null)} style={styles.fileRemove}>
+                                                <MaterialCommunityIcons name="close" size={16} color={Colors.white} />
+                                            </TouchableOpacity>
                                         </View>
 
                                         <Animated.View style={{ transform: [{ scale: analyzeScale }] }}>
@@ -296,34 +267,27 @@ export default function AnalyzeScreen() {
                                                 onPressOut={() => animatePressOut(analyzeScale)}
                                                 onPress={handleAnalyzeFile}
                                                 disabled={isAnalyzing}
-                                                style={{ opacity: isAnalyzing ? 0.6 : 1 }}
+                                                style={[styles.analyzeCTA, { opacity: isAnalyzing ? 0.6 : 1 }]}
                                             >
-                                                <LinearGradient
-                                                    colors={Colors.gradientPrimary}
-                                                    start={{ x: 0, y: 0 }}
-                                                    end={{ x: 1, y: 0 }}
-                                                    style={styles.analyzeCTA}
-                                                >
-                                                    {isAnalyzing ? (
-                                                        <View style={styles.analyzingRow}>
-                                                            <ActivityIndicator color={Colors.white} size="small" />
-                                                            <Text style={styles.analyzeCTAText}>  Analyzing...</Text>
-                                                        </View>
-                                                    ) : (
-                                                        <View style={styles.analyzingRow}>
-                                                            <MaterialCommunityIcons name="shield-search" size={20} color={Colors.textOnPrimary} style={{ marginRight: 10 }} />
-                                                            <Text style={styles.analyzeCTAText}>Analyze Contract</Text>
-                                                        </View>
-                                                    )}
-                                                </LinearGradient>
+                                                {isAnalyzing ? (
+                                                    <View style={styles.analyzingRow}>
+                                                        <ActivityIndicator color={Colors.white} size="small" />
+                                                        <Text style={styles.analyzeCTAText}>  Analyzing...</Text>
+                                                    </View>
+                                                ) : (
+                                                    <View style={styles.analyzingRow}>
+                                                        <MaterialCommunityIcons name="shield-check" size={20} color={Colors.white} style={{ marginRight: 8 }} />
+                                                        <Text style={styles.analyzeCTAText}>Analyze Document</Text>
+                                                    </View>
+                                                )}
                                             </Pressable>
                                         </Animated.View>
                                     </View>
                                 )}
-                            </>
+                            </View>
                         ) : (
-                            /* ─── Paste Content ─── */
-                            <View>
+                            /* Paste Zone */
+                            <View style={styles.pasteArea}>
                                 <TextInput
                                     style={styles.pasteInput}
                                     multiline
@@ -334,8 +298,8 @@ export default function AnalyzeScreen() {
                                     textAlignVertical="top"
                                     maxLength={10000}
                                 />
-
-                                <View style={styles.pasteFooter}>
+                                
+                                <View style={styles.pasteFooterInner}>
                                     <Text style={styles.charCount}>{text.length}/10000 characters</Text>
                                     <Animated.View style={{ transform: [{ scale: analyzeScale }] }}>
                                         <Pressable
@@ -343,35 +307,28 @@ export default function AnalyzeScreen() {
                                             onPressOut={() => animatePressOut(analyzeScale)}
                                             onPress={handlePasteAnalyze}
                                             disabled={!text.trim() || isAnalyzing}
-                                            style={{ opacity: (!text.trim() || isAnalyzing) ? 0.5 : 1 }}
+                                            style={[styles.pasteAnalyzeBtn, { opacity: (!text.trim() || isAnalyzing) ? 0.5 : 1 }]}
                                         >
-                                            <LinearGradient
-                                                colors={Colors.gradientPrimary}
-                                                start={{ x: 0, y: 0 }}
-                                                end={{ x: 1, y: 0 }}
-                                                style={styles.pasteAnalyzeBtn}
-                                            >
-                                                {isAnalyzing ? (
-                                                    <ActivityIndicator color={Colors.textOnPrimary} size="small" />
-                                                ) : (
-                                                    <>
-                                                        <MaterialCommunityIcons name="shield-search" size={18} color={Colors.textOnPrimary} style={{ marginRight: 8 }} />
-                                                        <Text style={styles.pasteAnalyzeBtnText}>Analyze</Text>
-                                                    </>
-                                                )}
-                                            </LinearGradient>
+                                            {isAnalyzing ? (
+                                                <ActivityIndicator color={Colors.white} size="small" />
+                                            ) : (
+                                                <>
+                                                    <MaterialCommunityIcons name="shield-check" size={16} color={Colors.white} style={{ marginRight: 6 }} />
+                                                    <Text style={styles.pasteAnalyzeBtnText}>Analyze</Text>
+                                                </>
+                                            )}
                                         </Pressable>
                                     </Animated.View>
                                 </View>
                             </View>
                         )}
 
-                        {/* ─── Features Strip (shared) ─── */}
+                        {/* Features Strip */}
                         <View style={styles.featuresStrip}>
                             {[
                                 { icon: 'lightning-bolt' as const, text: 'AI-Powered' },
-                                { icon: 'lock-outline' as const, text: 'Private' },
-                                { icon: 'timer-outline' as const, text: 'Instant' },
+                                { icon: 'lock' as const, text: 'Private' },
+                                { icon: 'clock' as const, text: 'Instant' },
                             ].map((f) => (
                                 <View key={f.text} style={styles.featureItem}>
                                     <MaterialCommunityIcons name={f.icon} size={14} color={Colors.primary} />
@@ -381,35 +338,33 @@ export default function AnalyzeScreen() {
                         </View>
                     </View>
 
-                    {/* ═══ Previous Scans Section (shared) ═══ */}
+                    {/* Previous Scans */}
                     <View style={styles.scansSection}>
                         <View style={styles.scansSectionHeader}>
                             <View style={styles.sectionTitleRow}>
                                 <View style={styles.sectionAccent} />
-                                <Text style={styles.sectionTitle}>Previous Scans</Text>
+                                <Text style={styles.sectionTitle}>Previous Scan</Text>
                             </View>
                             {history.length > 0 && (
                                 <TouchableOpacity onPress={() => router.push('/history')}>
-                                    <Text style={styles.viewAllText}>View All</Text>
+                                    <Text style={styles.viewAllText}>See all</Text>
                                 </TouchableOpacity>
                             )}
                         </View>
 
                         {history.length === 0 ? (
                             <View style={styles.emptyScans}>
-                                <View style={styles.emptyIconCircle}>
-                                    <MaterialCommunityIcons name="file-search-outline" size={28} color={Colors.textMuted} />
-                                </View>
+                                <MaterialCommunityIcons name="file-search-outline" size={28} color={Colors.textMuted} />
                                 <Text style={styles.emptyTitle}>No scans yet</Text>
-                                <Text style={styles.emptySubtitle}>Your analyzed documents will appear here</Text>
                             </View>
                         ) : (
-                            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 4 }}>
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingBottom: Spacing.md }}>
                                 {history.slice(0, 5).map((item) => (
                                     <HistoryItem
                                         key={item.id}
                                         name={item.fileName}
                                         size={item.fileSize || ''}
+                                        date={item.date}
                                         onPress={() => handleHistoryItemPress(item)}
                                         onDelete={() => handleDeleteHistory(item.id)}
                                         layout="horizontal"
@@ -429,203 +384,173 @@ export default function AnalyzeScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.background,
+        backgroundColor: Colors.backgroundLight,
     },
 
-    // ═══════════════════════════════
-    // HERO BANNER
-    // ═══════════════════════════════
-    heroBanner: {
-        paddingTop: 56,
-        paddingBottom: 40,
+    // ─ Header Details ─
+    headerArea: {
         paddingHorizontal: Spacing.xl,
-        borderBottomLeftRadius: 32,
-        borderBottomRightRadius: 32,
-        borderBottomWidth: 1.5,
-        borderBottomColor: Colors.primary,
+        paddingTop: 24,
+        paddingBottom: Spacing.xl,
     },
-    backButton: {
-        position: 'absolute',
-        top: 50,
-        left: Spacing.lg,
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: 'rgba(255,255,255,0.15)',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 10,
-    },
-    heroTitle: {
+    headerTitle: {
         fontFamily: 'Inter_700Bold',
-        fontSize: 26,
-        color: Colors.text,
-        marginTop: 28,
+        fontSize: 32,
+        color: '#474747',
         marginBottom: 8,
     },
-    heroSubtitle: {
+    headerSubtitle: {
         fontFamily: 'Inter_400Regular',
-        fontSize: 14,
-        color: 'rgba(255,255,255,0.8)',
-        lineHeight: 22,
-        marginBottom: Spacing.xl,
+        fontSize: 16,
+        color: '#64748B',
+        lineHeight: 24,
     },
 
-    // ─ Step Indicators ─
-    stepsRow: {
+    // ─ Stepper Component ─
+    stepperContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 4,
+        paddingHorizontal: Spacing.xl,
+        marginBottom: 32,
     },
     stepItem: {
         alignItems: 'center',
-        gap: 6,
     },
     stepCircle: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: 'rgba(255,255,255,0.15)',
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        backgroundColor: '#1E293B',
         alignItems: 'center',
         justifyContent: 'center',
+        marginBottom: 8,
     },
     stepCircleActive: {
-        backgroundColor: Colors.primary,
+        backgroundColor: '#E6CD7B',
     },
     stepLabel: {
-        fontFamily: 'Inter_500Medium',
-        fontSize: 11,
-        color: 'rgba(255,255,255,0.6)',
+        fontFamily: 'Inter_600SemiBold',
+        fontSize: 12,
+        color: '#64748B',
+        letterSpacing: 1,
     },
     stepLabelActive: {
-        color: Colors.primary,
-        fontFamily: 'Inter_600SemiBold',
+        color: '#D4AF37',
     },
     stepConnector: {
-        width: 36,
+        flex: 1,
         height: 2,
-        backgroundColor: 'rgba(255,255,255,0.25)',
-        marginHorizontal: 8,
-        marginBottom: 20,
-        borderRadius: 1,
+        backgroundColor: '#000',
+        marginHorizontal: 16,
+        marginTop: -24, // Shift up to align with circles vertically
     },
 
-    // ═══════════════════════════════
-    // FLOATING CARD
-    // ═══════════════════════════════
-    floatingCard: {
-        marginTop: -24,
-        marginHorizontal: Spacing.base,
-        backgroundColor: Colors.surface,
-        borderRadius: Radius['2xl'],
-        padding: Spacing.lg,
+    // ─ Main Dark Navy Card ─
+    mainCard: {
+        backgroundColor: Colors.background, // Should be '#0A1120'
+        marginHorizontal: Spacing.lg,
+        borderRadius: 24,
+        padding: 4,
         ...Shadows.lg,
     },
 
-    // ─ Tabs ─
-    tabBar: {
+    // ─ Tab Container ─
+    tabContainer: {
         flexDirection: 'row',
-        backgroundColor: Colors.tabBar,
-        borderRadius: Radius.md,
-        padding: 3,
-        marginBottom: Spacing.lg,
+        margin: Spacing.md,
+        borderRadius: 16,
+        backgroundColor: '#111827', // A bit darker than the main card, or maybe the same
     },
-    tab: {
+    tabButton: {
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: Spacing.md,
-        borderRadius: Radius.sm + 2,
+        paddingVertical: 14,
+        borderRadius: 14,
     },
-    tabActive: {
-        backgroundColor: Colors.surfaceElevated,
-        ...Shadows.sm,
+    tabButtonActive: {
+        backgroundColor: '#1F2937', // Light active color
     },
     tabText: {
-        fontFamily: 'Inter_600SemiBold',
-        fontSize: 13,
+        fontFamily: 'Inter_500Medium',
+        fontSize: 15,
         color: Colors.textMuted,
     },
     tabTextActive: {
         color: Colors.primary,
+        fontFamily: 'Inter_600SemiBold',
     },
 
     // ─ Upload Zone ─
-    uploadZone: {
-        borderWidth: 2,
-        borderColor: Colors.border,
-        borderStyle: 'dashed',
-        borderRadius: Radius.xl,
-        paddingVertical: 36,
-        paddingHorizontal: Spacing.xl,
+    uploadArea: {
+        paddingHorizontal: Spacing.md,
+        paddingBottom: Spacing.xl,
+    },
+    uploadZoneInner: {
+        borderWidth: 1,
+        borderColor: '#1F2937', // Subtle border
+        borderRadius: 20,
+        paddingVertical: 48,
         alignItems: 'center',
-        backgroundColor: Colors.surfaceElevated,
+        backgroundColor: '#111827',
     },
     uploadIconOuter: {
-        marginBottom: Spacing.base,
-        borderRadius: 40,
-        ...Shadows.sm,
-    },
-    uploadIconInner: {
-        width: 72,
-        height: 72,
-        borderRadius: 36,
+        width: 64,
+        height: 64,
+        borderRadius: 32,
+        backgroundColor: 'rgba(212, 175, 55, 0.1)', // Gold tint
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: Colors.surface,
-        borderWidth: 1,
-        borderColor: Colors.border,
+        marginBottom: 16,
     },
     uploadTitle: {
         fontFamily: 'Inter_600SemiBold',
-        fontSize: 16,
-        color: Colors.text,
-        marginBottom: 6,
+        fontSize: 20,
+        color: Colors.white,
         textAlign: 'center',
+        marginBottom: 8,
+        lineHeight: 28,
     },
     uploadFormats: {
         fontFamily: 'Inter_400Regular',
-        fontSize: 13,
+        fontSize: 14,
         color: Colors.textMuted,
-        marginBottom: Spacing.base,
+        marginBottom: 24,
     },
-    browseChip: {
+    browseButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: Colors.surface,
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        borderRadius: Radius.full,
-        borderWidth: 1,
-        borderColor: Colors.border,
+        backgroundColor: '#1F2937',
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        borderRadius: 20,
     },
-    browseChipText: {
+    browseButtonText: {
         fontFamily: 'Inter_600SemiBold',
-        fontSize: 13,
+        fontSize: 14,
         color: Colors.primary,
     },
 
-    // ─ Selected File ─
+    // ─ Selected File (Upload Area) ─
     fileSection: {
         gap: Spacing.base,
     },
     selectedFile: {
-        borderRadius: Radius.lg,
-        overflow: 'hidden',
-        ...Shadows.colored(Colors.primary),
-    },
-    selectedFileGradient: {
         flexDirection: 'row',
         alignItems: 'center',
         padding: Spacing.base,
+        backgroundColor: '#111827',
+        borderRadius: Radius.lg,
+        borderWidth: 1,
+        borderColor: '#1F2937',
     },
     fileIconBox: {
         width: 44,
         height: 44,
         borderRadius: Radius.md,
-        backgroundColor: 'rgba(255,255,255,0.2)',
+        backgroundColor: Colors.primary,
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: Spacing.md,
@@ -636,23 +561,21 @@ const styles = StyleSheet.create({
     fileName: {
         fontFamily: 'Inter_600SemiBold',
         fontSize: 14,
-        color: Colors.textOnPrimary,
+        color: Colors.white,
         marginBottom: 3,
     },
     fileSize: {
         fontFamily: 'Inter_400Regular',
         fontSize: 12,
-        color: Colors.textOnPrimary,
-        opacity: 0.8,
+        color: Colors.textMuted,
     },
     fileRemove: {
         padding: 8,
-        backgroundColor: 'rgba(0,0,0,0.1)',
+        backgroundColor: 'rgba(255,255,255,0.1)',
         borderRadius: Radius.full,
     },
-
-    // ─ Analyze CTA ─
     analyzeCTA: {
+        backgroundColor: Colors.primaryDark,
         paddingVertical: 16,
         borderRadius: Radius.lg,
         alignItems: 'center',
@@ -663,29 +586,36 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     analyzeCTAText: {
-        ...Typography.button,
-        letterSpacing: 0.3,
+        fontFamily: 'Inter_600SemiBold',
+        fontSize: 16,
+        color: Colors.white,
     },
 
     // ─ Paste Content ─
+    pasteArea: {
+        paddingHorizontal: Spacing.md,
+        paddingBottom: Spacing.xl,
+    },
     pasteInput: {
-        backgroundColor: Colors.surfaceElevated,
-        borderRadius: Radius.lg,
-        padding: Spacing.base,
+        backgroundColor: '#111827',
+        borderRadius: 20,
+        padding: Spacing.lg,
         fontFamily: 'Inter_400Regular',
         fontSize: 15,
-        lineHeight: 24,
-        color: Colors.text,
+        color: Colors.white,
         textAlignVertical: 'top',
-        borderWidth: 1.5,
-        borderColor: Colors.border,
-        minHeight: 200,
+        minHeight: 280,
+        borderWidth: 1,
+        borderColor: '#1F2937',
     },
-    pasteFooter: {
+    pasteFooterInner: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingVertical: Spacing.md,
+        position: 'absolute',
+        bottom: 32,
+        left: 32,
+        right: 32,
     },
     charCount: {
         fontFamily: 'Inter_400Regular',
@@ -695,12 +625,15 @@ const styles = StyleSheet.create({
     pasteAnalyzeBtn: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 12,
-        paddingHorizontal: 24,
-        borderRadius: Radius.full,
+        backgroundColor: '#CDA153',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 20,
     },
     pasteAnalyzeBtnText: {
-        ...Typography.buttonSm,
+        fontFamily: 'Inter_600SemiBold',
+        fontSize: 14,
+        color: Colors.white,
     },
 
     // ─ Features Strip ─
@@ -708,83 +641,59 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         gap: Spacing.xl,
-        marginTop: Spacing.lg,
-        paddingTop: Spacing.base,
-        borderTopWidth: 1,
-        borderTopColor: Colors.borderLight,
+        paddingVertical: Spacing.lg,
     },
     featureItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 5,
+        gap: 6,
     },
     featureText: {
         fontFamily: 'Inter_500Medium',
         fontSize: 12,
-        color: Colors.textSecondary,
+        color: Colors.primary,
     },
 
-    // ═══════════════════════════════
-    // PREVIOUS SCANS
-    // ═══════════════════════════════
+    // ─ Previous Scans ─
     scansSection: {
-        marginTop: Spacing.xl,
+        marginTop: 32,
         paddingHorizontal: Spacing.lg,
     },
     scansSectionHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: Spacing.base,
+        marginBottom: Spacing.lg,
     },
     sectionTitleRow: {
         flexDirection: 'row',
         alignItems: 'center',
     },
     sectionAccent: {
-        width: 3,
-        height: 18,
-        backgroundColor: Colors.primary,
+        width: 4,
+        height: 20,
+        backgroundColor: '#C59A45', // Gold accent
         borderRadius: 2,
         marginRight: Spacing.sm,
     },
     sectionTitle: {
         fontFamily: 'Inter_600SemiBold',
         fontSize: 16,
-        color: Colors.text,
+        color: '#000',
     },
     viewAllText: {
         fontFamily: 'Inter_600SemiBold',
-        fontSize: 13,
-        color: Colors.primary,
+        fontSize: 14,
+        color: '#D4AF37',
     },
-
-    // ─ Empty Scans ─
     emptyScans: {
         alignItems: 'center',
-        paddingVertical: Spacing['2xl'],
-        backgroundColor: Colors.surface,
-        borderRadius: Radius.lg,
-        ...Shadows.sm,
-    },
-    emptyIconCircle: {
-        width: 56,
-        height: 56,
-        borderRadius: 28,
-        backgroundColor: Colors.surfaceSubtle,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: Spacing.md,
+        paddingVertical: Spacing.xl,
     },
     emptyTitle: {
-        fontFamily: 'Inter_600SemiBold',
+        fontFamily: 'Inter_500Medium',
         fontSize: 14,
-        color: Colors.text,
-        marginBottom: 4,
-    },
-    emptySubtitle: {
-        fontFamily: 'Inter_400Regular',
-        fontSize: 12,
-        color: Colors.textMuted,
+        color: '#000',
+        marginTop: 8,
     },
 });

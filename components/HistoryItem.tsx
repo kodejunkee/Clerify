@@ -32,24 +32,19 @@ export const HistoryItem = ({ name, size, date, onPress, onDelete, layout = 'hor
                     onPressIn={onPressIn}
                     onPressOut={onPressOut}
                 >
-                    {/* Visual Accent Strip */}
-                    <View style={styles.verticalAccent} />
-                    
                     <View style={styles.iconContainer}>
-                        <MaterialCommunityIcons name="file-document-outline" size={22} color={Colors.primary} />
+                        <MaterialCommunityIcons name="file-document-outline" size={24} color={Colors.white} />
                     </View>
                     
                     <View style={styles.verticalInfo}>
                         <Text style={styles.verticalName} numberOfLines={1}>{name}</Text>
                         <View style={styles.verticalMetaRow}>
-                            <MaterialCommunityIcons name="database-outline" size={12} color={Colors.textMuted} style={{ marginRight: 4 }} />
                             <Text style={styles.verticalMetaText}>{size}</Text>
                             {date && (
                                 <>
                                     <View style={styles.metaDot} />
-                                    <MaterialCommunityIcons name="clock-outline" size={12} color={Colors.textMuted} style={{ marginRight: 4 }} />
                                     <Text style={styles.verticalMetaText}>
-                                        {new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                        {new Date(date).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' })}
                                     </Text>
                                 </>
                             )}
@@ -64,7 +59,7 @@ export const HistoryItem = ({ name, size, date, onPress, onDelete, layout = 'hor
                         >
                             <MaterialCommunityIcons name="trash-can-outline" size={20} color="#EF4444" />
                         </TouchableOpacity>
-                        <MaterialCommunityIcons name="chevron-right" size={20} color={Colors.textMuted} />
+                        <MaterialCommunityIcons name="chevron-right" size={24} color="#000" />
                     </View>
                 </Pressable>
             </Animated.View>
@@ -111,16 +106,16 @@ const styles = StyleSheet.create({
         width: 160,
         padding: Spacing.md,
         borderRadius: Radius.xl,
-        backgroundColor: Colors.surface,
+        backgroundColor: Colors.white,
         ...Shadows.md,
         borderWidth: 1,
-        borderColor: Colors.border,
+        borderColor: '#E6CD7B',
     },
     horizontalIconCircle: {
         width: 36,
         height: 36,
         borderRadius: 18,
-        backgroundColor: '#27272A',
+        backgroundColor: Colors.cardDark,
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: Spacing.sm,
@@ -128,7 +123,7 @@ const styles = StyleSheet.create({
     horizontalName: {
         fontFamily: 'Inter_600SemiBold',
         fontSize: 14,
-        color: Colors.text,
+        color: '#000',
         marginBottom: 8,
     },
     horizontalMeta: {
@@ -147,35 +142,23 @@ const styles = StyleSheet.create({
 
     // ─── Vertical Layout ───
     verticalWrapper: {
-        marginBottom: Spacing.sm,
+        marginBottom: Spacing.md,
     },
     verticalItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        padding: Spacing.base,
-        backgroundColor: Colors.surface,
-        borderRadius: Radius.lg,
-        ...Shadows.sm,
+        padding: Spacing.lg,
+        backgroundColor: Colors.white,
+        borderRadius: 20,
         borderWidth: 1,
-        borderColor: Colors.border,
-        overflow: 'hidden',
-    },
-    verticalAccent: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        bottom: 0,
-        width: 4,
-        backgroundColor: Colors.primary,
-        opacity: 0.15,
+        borderColor: '#E6CD7B',
+        ...Shadows.sm,
     },
     iconContainer: {
         width: 48,
         height: 48,
-        borderRadius: 12,
-        backgroundColor: '#F8FAFC',
-        borderWidth: 1,
-        borderColor: Colors.border,
+        borderRadius: 14,
+        backgroundColor: Colors.cardDark,
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: Spacing.md,
@@ -186,7 +169,7 @@ const styles = StyleSheet.create({
     verticalName: {
         fontFamily: 'Inter_600SemiBold',
         fontSize: 16,
-        color: Colors.text,
+        color: '#000',
         marginBottom: 4,
     },
     verticalMetaRow: {
@@ -194,9 +177,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     verticalMetaText: {
-        fontFamily: 'Inter_400Regular',
+        fontFamily: 'Inter_500Medium',
         fontSize: 12,
-        color: Colors.textMuted,
+        color: '#94A3B8',
     },
     metaDot: {
         width: 3,
@@ -208,14 +191,14 @@ const styles = StyleSheet.create({
     actionRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
+        gap: 12,
     },
     verticalDelete: {
         width: 36,
         height: 36,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(239, 68, 68, 0.15)',
-        borderRadius: 10,
+        backgroundColor: '#FCE7F3',
+        borderRadius: 18,
     },
 });

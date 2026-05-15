@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated, Pressable, Dimensions, Platform } from 'react-native';
 import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 import { Colors } from '../constants/Colors';
 import { Typography, Spacing, Radius, Shadows } from '../constants/Theme';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -52,25 +52,25 @@ export default function AnalysisResultScreen() {
 
     const { score, redFlags, summary } = result;
 
-    // Risk level from figma colors
-    const riskColor = score > 75 ? '#BE123C' : score > 40 ? '#D4AF37' : '#10B981';
-    const riskColorLight = score > 75 ? '#FFF1F2' : score > 40 ? '#FFFBEB' : '#ECFDF5';
-    const riskLabel = score > 75 ? 'Critical Risk' : score > 40 ? 'Moderate Risk' : 'Safe';
-    const riskIcon = score > 75 ? 'alert-octagon' as const : score > 40 ? 'alert' as const : 'shield-check' as const;
+    // Risk level thresholds matching the Figma designs
+    const isCritical = score > 75;
+    const isModerate = score > 40 && score <= 75;
 
-    // Hero gradient colors based on risk
-    const heroColors = score > 75
-        ? ['#7F1D1D', '#991B1B', '#B91C1C'] as [string, string, string] // Deeper Red
-        : score > 40
-        ? ['#78350F', '#92400E', '#B45309'] as [string, string, string] // Deeper Amber
-        : ['#064E3B', '#065F46', '#059669'] as [string, string, string] // Deeper Emerald
+    const ringColor = isCritical ? '#C91D42' : isModerate ? '#E4C76B' : '#1AB670';
+    const riskLabelColor = isCritical ? '#C91D42' : isModerate ? '#D4AF37' : '#1AB670';
+    const riskLabel = isCritical ? 'Critical  Risk' : isModerate ? 'Moderate Risk' : 'Safe  Risk';
+    const riskIcon = isCritical
+        ? ('alert-outline' as const)
+        : isModerate
+        ? ('alert-outline' as const)
+        : ('shield-check-outline' as const);
 
     const criticalCount = redFlags.filter((f: any) => f.severity === 'critical').length;
     const moderateCount = redFlags.filter((f: any) => f.severity === 'moderate').length;
     const lowCount = redFlags.filter((f: any) => f.severity !== 'critical' && f.severity !== 'moderate').length;
 
     return (
-        <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
+        <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom', 'top']}>
             <Stack.Screen options={{ headerShown: false }} />
 
             <ScrollView
@@ -79,22 +79,22 @@ export default function AnalysisResultScreen() {
                 bounces={false}
                 contentContainerStyle={{ paddingBottom: 120 }}
             >
-                {/* ═══ Risk-Colored Hero Banner ═══ */}
-                <LinearGradient
-                    colors={heroColors}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.heroBanner}
-                >
-                    <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-                        <MaterialCommunityIcons name="arrow-left" size={24} color="rgba(255,255,255,0.9)" />
-                    </TouchableOpacity>
-
-                    <Text style={styles.heroTitle}>Analysis Complete</Text>
+                {/* ═══ Dark Navy Hero ═══ */}
+                <View style={styles.heroArea}>
+                    {/* Back Button & Title Row */}
+                    <View style={styles.headerRow}>
+                        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                            <MaterialCommunityIcons name="chevron-left" size={28} color="#FFFFFF" />
+                        </TouchableOpacity>
+                        <Text style={styles.heroTitle}>Analysis Complete</Text>
+                        {/* Spacer to balance the row */}
+                        <View style={{ width: 36 }} />
+                    </View>
 
                     {/* Score Ring */}
                     <View style={styles.scoreRingOuter}>
-                        <View style={styles.scoreRingInner}>
+                        <View style={[styles.scoreRingTrack, { borderColor: ringColor }]} />
+                        <View style={styles.scoreCenter}>
                             <Animated.Text style={styles.scoreValue}>
                                 {scoreAnim.interpolate({
                                     inputRange: [0, 100],
@@ -102,100 +102,76 @@ export default function AnalysisResultScreen() {
                                     extrapolate: 'clamp',
                                 })}
                             </Animated.Text>
-                            <Text style={styles.scoreMax}>/100</Text>
+                            <Text style={[styles.scoreMax, { color: ringColor }]}>/100</Text>
                         </View>
                     </View>
 
+                    {/* Risk Badge */}
                     <View style={styles.riskBadge}>
-                        <MaterialCommunityIcons name={riskIcon} size={16} color={Colors.white} />
-                        <Text style={styles.riskBadgeText}>{riskLabel}</Text>
-                    </View>
-                </LinearGradient>
-
-                {/* ═══ Floating Stats Card ═══ */}
-                <View style={styles.statsCardWrapper}>
-                    <View style={styles.statsCard}>
-                        <View style={styles.statItem}>
-                            <Text style={[styles.statValue, { color: '#BE123C' }]}>{criticalCount}</Text>
-                            <Text style={styles.statLabel}>Critical</Text>
-                        </View>
-                        <View style={styles.statDivider} />
-                        <View style={styles.statItem}>
-                            <Text style={[styles.statValue, { color: '#D4AF37' }]}>{moderateCount}</Text>
-                            <Text style={styles.statLabel}>Moderate</Text>
-                        </View>
-                        <View style={styles.statDivider} />
-                        <View style={styles.statItem}>
-                            <Text style={[styles.statValue, { color: '#10B981' }]}>{lowCount}</Text>
-                            <Text style={styles.statLabel}>Low</Text>
-                        </View>
+                        <MaterialCommunityIcons name={riskIcon} size={16} color={riskLabelColor} />
+                        <Text style={[styles.riskBadgeText, { color: riskLabelColor }]}>{riskLabel}</Text>
                     </View>
                 </View>
 
-                {/* ═══ Summary Section ═══ */}
-                <Animated.View style={[styles.section, { opacity: fadeAnim }]}>
-                    <View style={styles.sectionTitleRow}>
-                        <View style={styles.sectionIconBox}>
-                            <MaterialCommunityIcons name="text-box-outline" size={16} color={Colors.primary} />
-                        </View>
-                        <Text style={styles.sectionTitle}>Summary</Text>
-                    </View>
-                    <View style={styles.summaryCard}>
-                        <View style={[styles.summaryAccent, { backgroundColor: Colors.primary }]} />
-                        <Text style={styles.summaryText}>{summary}</Text>
-                    </View>
-                </Animated.View>
+                {/* ═══ White Bottom Sheet with rounded top corners ═══ */}
+                <View style={styles.whiteSheet}>
 
-                {/* ═══ Red Flags Section ═══ */}
-                <View style={styles.section}>
-                    <View style={styles.sectionTitleRow}>
-                        <View style={[styles.sectionIconBox, { backgroundColor: 'rgba(239, 68, 68, 0.15)' }]}>
-                            <MaterialCommunityIcons name="flag-outline" size={16} color="#EF4444" />
-                        </View>
-                        <Text style={styles.sectionTitle}>Red Flags</Text>
-                        <View style={styles.flagCountBadge}>
-                            <Text style={styles.flagCountText}>{redFlags.length}</Text>
-                        </View>
-                    </View>
-
-                    {redFlags.map((flag: any, index: number) => {
-                        const isCritical = flag.severity === 'critical';
-                        const isModerate = flag.severity === 'moderate';
-
-                        const accentColor = isCritical ? '#BE123C' : isModerate ? '#D4AF37' : '#10B981';
-                        const cardBorder = isCritical ? '#FECDD3' : isModerate ? '#FDE68A' : '#A7F3D0';
-                        const iconName = isCritical ? 'alert-decagram' as const : isModerate ? 'alert-circle-outline' as const : 'information-outline' as const;
-                        const severityLabel = isCritical ? 'CRITICAL' : isModerate ? 'MODERATE' : 'LOW';
-
-                        return (
-                            <Animated.View
-                                key={index}
-                                style={[
-                                    styles.flagCard,
-                                    { borderLeftColor: accentColor, opacity: fadeAnim },
-                                ]}
-                            >
-                                <View style={styles.flagHeader}>
-                                    <View style={[styles.flagIconCircle, { backgroundColor: `${accentColor}15` }]}>
-                                        <MaterialCommunityIcons name={iconName} size={18} color={accentColor} />
-                                    </View>
-                                    <View style={[styles.severityChip, { backgroundColor: `${accentColor}15` }]}>
-                                        <View style={[styles.severityDot, { backgroundColor: accentColor }]} />
-                                        <Text style={[styles.severityText, { color: accentColor }]}>{severityLabel}</Text>
-                                    </View>
+                    {/* ─ Frosted Stats Card ─
+                         Overlaps the top rounded edge of the white sheet via negative marginTop */}
+                    <View style={styles.statsCardClip}>
+                        <BlurView
+                            intensity={80}
+                            tint="light"
+                            style={styles.statsBlur}
+                        >
+                            <View style={styles.statsRow}>
+                                <View style={styles.statItem}>
+                                    <Text style={[styles.statValue, { color: '#BE123C' }]}>{criticalCount}</Text>
+                                    <Text style={styles.statLabel}>Critical</Text>
                                 </View>
-                                <Text style={styles.flagText}>{flag.clause}</Text>
-                            </Animated.View>
-                        );
-                    })}
-
-                    {redFlags.length === 0 && (
-                        <View style={styles.emptyFlags}>
-                            <View style={styles.emptyFlagIcon}>
-                                <MaterialCommunityIcons name="shield-check-outline" size={32} color="#10B981" />
+                                <View style={styles.statItem}>
+                                    <Text style={[styles.statValue, { color: '#D4AF37' }]}>{moderateCount}</Text>
+                                    <Text style={styles.statLabel}>Moderate</Text>
+                                </View>
+                                <View style={styles.statItem}>
+                                    <Text style={[styles.statValue, { color: '#10B981' }]}>{lowCount}</Text>
+                                    <Text style={styles.statLabel}>Low</Text>
+                                </View>
                             </View>
-                            <Text style={styles.emptyFlagTitle}>All Clear!</Text>
-                            <Text style={styles.emptyFlagText}>No specific red flags detected in this document.</Text>
+                        </BlurView>
+                    </View>
+
+                    {/* Summary Section */}
+                    <Animated.View style={[styles.section, { opacity: fadeAnim }]}>
+                        <View style={styles.sectionTitleRow}>
+                            <MaterialCommunityIcons name="text-box" size={18} color="#C59A45" />
+                            <Text style={styles.sectionTitle}>Summary</Text>
+                        </View>
+                        <View style={styles.summaryCard}>
+                            <Text style={styles.summaryText}>{summary}</Text>
+                        </View>
+                    </Animated.View>
+
+                    {/* Red Flags Section */}
+                    {redFlags.length > 0 && (
+                        <View style={styles.section}>
+                            <View style={styles.sectionTitleRow}>
+                                <MaterialCommunityIcons name="flag-outline" size={18} color="#EF4444" />
+                                <Text style={styles.sectionTitle}>Red Flags</Text>
+                                <View style={styles.flagCountBadge}>
+                                    <Text style={styles.flagCountText}>{redFlags.length}</Text>
+                                </View>
+                            </View>
+
+                            {redFlags.map((flag: any, index: number) => (
+                                <Animated.View
+                                    key={index}
+                                    style={[styles.flagCard, { opacity: fadeAnim }]}
+                                >
+                                    <MaterialCommunityIcons name="alert-circle-outline" size={20} color="#C59A45" style={{ marginTop: 2 }} />
+                                    <Text style={styles.flagText}>{flag.clause}</Text>
+                                </Animated.View>
+                            ))}
                         </View>
                     )}
                 </View>
@@ -209,15 +185,10 @@ export default function AnalysisResultScreen() {
                         onPressOut={() => animatePressOut(pdfScale)}
                         onPress={() => generateContractPDF(result)}
                     >
-                        <LinearGradient
-                            colors={Colors.gradientPrimary}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 0 }}
-                            style={styles.pdfButtonGradient}
-                        >
-                            <MaterialCommunityIcons name="file-download-outline" size={20} color={Colors.textOnPrimary} style={{ marginRight: 10 }} />
+                        <View style={styles.pdfButton}>
+                            <MaterialCommunityIcons name="file-download-outline" size={20} color={Colors.white} style={{ marginRight: 10 }} />
                             <Text style={styles.pdfButtonText}>Download as PDF</Text>
-                        </LinearGradient>
+                        </View>
                     </Pressable>
                 </Animated.View>
 
@@ -228,7 +199,7 @@ export default function AnalysisResultScreen() {
                         onPress={() => router.push('/analyze')}
                         style={styles.newScanButton}
                     >
-                        <MaterialCommunityIcons name="plus" size={22} color={Colors.primary} />
+                        <MaterialCommunityIcons name="plus" size={22} color="#C59A45" />
                     </Pressable>
                 </Animated.View>
             </View>
@@ -239,110 +210,119 @@ export default function AnalysisResultScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.background,
+        backgroundColor: '#0A1120',
     },
     errorText: {
         ...Typography.body,
         textAlign: 'center',
         marginTop: Spacing['3xl'],
+        color: Colors.white,
     },
 
     // ═══════════════════════════════
-    // HERO BANNER
+    // HERO AREA  (#0A1120 navy)
     // ═══════════════════════════════
-    heroBanner: {
-        paddingTop: 56,
-        paddingBottom: 48,
-        paddingHorizontal: Spacing.xl,
-        borderBottomLeftRadius: 32,
-        borderBottomRightRadius: 32,
+    heroArea: {
+        backgroundColor: '#0A1120',
+        paddingTop: 8,
+        paddingBottom: 90,  // Room for: 24px gap + 36px stats card overlap + 30px sheet overlap
         alignItems: 'center',
-        borderBottomWidth: 1.5,
-        borderBottomColor: Colors.primary,
+    },
+    headerRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+        paddingHorizontal: Spacing.lg,
+        marginBottom: 24,
     },
     backButton: {
-        position: 'absolute',
-        top: 50,
-        left: Spacing.lg,
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: 'rgba(255,255,255,0.15)',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 10,
+        padding: 4,
     },
     heroTitle: {
         fontFamily: 'Inter_600SemiBold',
-        fontSize: 16,
-        color: 'rgba(255,255,255,0.8)',
-        marginTop: 24,
-        marginBottom: Spacing.xl,
-        letterSpacing: 0.5,
+        fontSize: 18,
+        color: Colors.white,
     },
 
     // ─ Score Ring ─
     scoreRingOuter: {
-        width: 140,
-        height: 140,
-        borderRadius: 70,
-        borderWidth: 8,
-        borderColor: 'rgba(255,255,255,0.3)',
+        width: 180,
+        height: 180,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: Spacing.lg,
+        marginBottom: 24,
     },
-    scoreRingInner: {
-        width: 116,
-        height: 116,
-        borderRadius: 58,
-        backgroundColor: 'rgba(255,255,255,0.15)',
+    scoreRingTrack: {
+        position: 'absolute',
+        width: 180,
+        height: 180,
+        borderRadius: 90,
+        borderWidth: 14,
+    },
+    scoreCenter: {
         alignItems: 'center',
         justifyContent: 'center',
     },
     scoreValue: {
         fontFamily: 'Inter_700Bold',
-        fontSize: 48,
-        color: Colors.text,
+        fontSize: 56,
+        color: Colors.white,
     },
     scoreMax: {
-        fontFamily: 'Inter_400Regular',
-        fontSize: 14,
-        color: 'rgba(255,255,255,0.6)',
-        marginTop: -4,
+        fontFamily: 'Inter_500Medium',
+        fontSize: 16,
+        marginTop: -6,
     },
 
     // ─ Risk Badge ─
     riskBadge: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'rgba(255,255,255,0.2)',
-        paddingVertical: 8,
-        paddingHorizontal: 20,
+        backgroundColor: Colors.white,
+        paddingVertical: 10,
+        paddingHorizontal: 24,
         borderRadius: Radius.full,
         gap: 8,
     },
     riskBadgeText: {
-        fontFamily: 'Inter_600SemiBold',
+        fontFamily: 'Inter_700Bold',
         fontSize: 14,
-        color: Colors.white,
     },
 
     // ═══════════════════════════════
-    // STATS CARD
+    // WHITE BOTTOM SHEET
+    // Rounded top corners, overlaps hero slightly
     // ═══════════════════════════════
-    statsCardWrapper: {
-        marginTop: -28,
-        marginHorizontal: Spacing.xl,
-        marginBottom: Spacing.xl,
+    whiteSheet: {
+        backgroundColor: Colors.white,
+        borderTopLeftRadius: 32,
+        borderTopRightRadius: 32,
+        marginTop: -30,           // Pull white sheet 30px into the hero's bottom padding
+        paddingTop: 0,
+        minHeight: Dimensions.get('window').height * 0.5,
     },
-    statsCard: {
-        flexDirection: 'row',
-        backgroundColor: Colors.surface,
-        borderRadius: Radius.xl,
-        paddingVertical: Spacing.lg,
+
+    // ─ Stats Card (Glassmorphism) ─
+    // Lives inside whiteSheet, overlaps its rounded top edge
+    statsCardClip: {
+        marginHorizontal: Spacing.xl,
+        marginTop: -36,           // Float 36px above white sheet top to straddle the edge
+        marginBottom: Spacing.xl,
+        borderRadius: 20,
+        overflow: 'hidden',
+        borderWidth: 1.5,
+        borderColor: '#E6CD7B',
+        backgroundColor: Platform.OS === 'android'
+            ? 'rgba(230, 230, 235, 0.85)'
+            : 'rgba(255, 255, 255, 0.25)',
+    },
+    statsBlur: {
+        paddingVertical: 20,
         paddingHorizontal: Spacing.base,
-        ...Shadows.lg,
+    },
+    statsRow: {
+        flexDirection: 'row',
         alignItems: 'center',
     },
     statItem: {
@@ -352,22 +332,15 @@ const styles = StyleSheet.create({
     statValue: {
         fontFamily: 'Inter_700Bold',
         fontSize: 24,
-        marginBottom: 2,
+        marginBottom: 4,
     },
     statLabel: {
-        fontFamily: 'Inter_500Medium',
-        fontSize: 12,
-        color: Colors.textMuted,
-    },
-    statDivider: {
-        width: 1,
-        height: 32,
-        backgroundColor: Colors.border,
+        fontFamily: 'Inter_600SemiBold',
+        fontSize: 13,
+        color: '#6B7280',
     },
 
-    // ═══════════════════════════════
-    // SECTIONS
-    // ═══════════════════════════════
+    // ─ Sections ─
     section: {
         paddingHorizontal: Spacing.lg,
         marginBottom: Spacing.xl,
@@ -376,140 +349,61 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: Spacing.base,
-        gap: 10,
-    },
-    sectionIconBox: {
-        width: 32,
-        height: 32,
-        borderRadius: 10,
-        backgroundColor: Colors.surfaceElevated,
-        alignItems: 'center',
-        justifyContent: 'center',
+        gap: 8,
     },
     sectionTitle: {
         fontFamily: 'Inter_700Bold',
         fontSize: 18,
-        color: Colors.text,
+        color: '#000',
         flex: 1,
     },
 
     // ─ Summary Card ─
     summaryCard: {
-        backgroundColor: Colors.surface,
-        borderRadius: Radius.xl,
+        backgroundColor: Colors.white,
+        borderRadius: 20,
         padding: Spacing.lg,
-        paddingLeft: Spacing.lg + 6,
-        position: 'relative',
-        overflow: 'hidden',
-        ...Shadows.sm,
-        borderWidth: 1,
-        borderColor: Colors.border,
-    },
-    summaryAccent: {
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        bottom: 0,
-        width: 4,
+        borderWidth: 1.5,
+        borderColor: '#D4AF37',
     },
     summaryText: {
-        fontFamily: 'Inter_400Regular',
-        fontSize: 15,
-        lineHeight: 26,
-        color: Colors.text,
+        fontFamily: 'Inter_500Medium',
+        fontSize: 14,
+        lineHeight: 24,
+        color: '#000',
     },
 
     // ─ Flag Count Badge ─
     flagCountBadge: {
-        backgroundColor: '#FFF1F2',
-        paddingVertical: 4,
-        paddingHorizontal: 12,
+        backgroundColor: '#FFE4E6',
+        paddingVertical: 3,
+        paddingHorizontal: 10,
         borderRadius: Radius.full,
     },
     flagCountText: {
         fontFamily: 'Inter_700Bold',
-        fontSize: 13,
-        color: '#EF4444',
+        fontSize: 12,
+        color: '#E11D48',
     },
 
     // ─ Flag Card ─
     flagCard: {
-        backgroundColor: Colors.surface,
-        borderRadius: Radius.lg,
-        padding: Spacing.base,
-        marginBottom: Spacing.md,
-        borderLeftWidth: 4,
-        borderLeftColor: '#BE123C',
-        ...Shadows.sm,
-        borderWidth: 1,
-        borderColor: Colors.border,
-    },
-    flagHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        backgroundColor: Colors.white,
+        borderRadius: 16,
+        padding: Spacing.md,
         marginBottom: Spacing.sm,
-        gap: Spacing.sm,
-    },
-    flagIconCircle: {
-        width: 32,
-        height: 32,
-        borderRadius: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    severityChip: {
+        borderWidth: 1.5,
+        borderColor: '#D4AF37',
         flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 3,
-        paddingHorizontal: 10,
-        borderRadius: Radius.full,
-        gap: 6,
-    },
-    severityDot: {
-        width: 6,
-        height: 6,
-        borderRadius: 3,
-    },
-    severityText: {
-        fontFamily: 'Inter_700Bold',
-        fontSize: 10,
-        letterSpacing: 0.8,
+        alignItems: 'flex-start',
+        gap: Spacing.md,
     },
     flagText: {
-        fontFamily: 'Inter_400Regular',
-        fontSize: 14,
-        lineHeight: 22,
-        color: Colors.text,
-        marginLeft: 2,
-    },
-
-    // ─ Empty Flags ─
-    emptyFlags: {
-        alignItems: 'center',
-        paddingVertical: Spacing['2xl'],
-        backgroundColor: Colors.surface,
-        borderRadius: Radius.xl,
-        ...Shadows.sm,
-    },
-    emptyFlagIcon: {
-        width: 64,
-        height: 64,
-        borderRadius: 32,
-        backgroundColor: 'rgba(16, 185, 129, 0.15)',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: Spacing.md,
-    },
-    emptyFlagTitle: {
-        fontFamily: 'Inter_700Bold',
-        fontSize: 18,
-        color: Colors.text,
-        marginBottom: 4,
-    },
-    emptyFlagText: {
-        fontFamily: 'Inter_400Regular',
+        fontFamily: 'Inter_600SemiBold',
         fontSize: 13,
-        color: Colors.textMuted,
+        lineHeight: 20,
+        color: '#000',
+        flex: 1,
     },
 
     // ═══════════════════════════════
@@ -520,35 +414,38 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-        backgroundColor: Colors.surface,
+        backgroundColor: Colors.white,
         paddingHorizontal: Spacing.lg,
         paddingVertical: Spacing.base,
         paddingBottom: Spacing['2xl'],
         borderTopWidth: 1,
-        borderTopColor: Colors.borderLight,
+        borderTopColor: '#F1F5F9',
         flexDirection: 'row',
         alignItems: 'center',
         gap: Spacing.md,
     },
-    pdfButtonGradient: {
+    pdfButton: {
+        backgroundColor: '#0A1120',
         paddingVertical: 16,
-        borderRadius: Radius.lg,
+        borderRadius: Radius.full,
         alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'center',
     },
     pdfButtonText: {
-        ...Typography.button,
-        color: Colors.textOnPrimary,
+        fontFamily: 'Inter_600SemiBold',
+        fontSize: 15,
+        color: Colors.white,
     },
     newScanButton: {
         width: 52,
         height: 52,
-        borderRadius: Radius.lg,
-        backgroundColor: Colors.surfaceElevated,
+        borderRadius: 26,
+        backgroundColor: Colors.white,
         alignItems: 'center',
         justifyContent: 'center',
         borderWidth: 1,
-        borderColor: Colors.border,
+        borderColor: '#E5E7EB',
+        ...Shadows.sm,
     },
 });

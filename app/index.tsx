@@ -22,53 +22,47 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
+    <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom', 'top']}>
       <Stack.Screen
         options={{
-          headerTitle: () => (
-            <View style={styles.headerTitleContainer}>
-              <Image
-                source={require('../assets/icon.png')}
-                style={styles.headerLogo}
-                contentFit="contain"
-              />
-              <Text style={styles.headerTitleText}>Contract Guardian</Text>
-            </View>
-          ),
-          headerTitleAlign: 'left',
-          headerShadowVisible: false,
-          headerStyle: { backgroundColor: Colors.background },
-          title: '',
+          headerShown: false,
         }}
       />
       <StatusBar style="light" />
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
+        {/* Custom Header */}
+        <View style={styles.customHeader}>
+          <View style={styles.headerLogoBox}>
+            <Image
+              source={require('../assets/icon.png')}
+              style={styles.headerLogoImage}
+              contentFit="contain"
+            />
+          </View>
+          <Text style={styles.headerTitleText}>Contract Guardian</Text>
+        </View>
+
         {/* Hero Section */}
         <View style={styles.hero}>
-          {/* Architectural Shield Backdrop */}
-          <View style={styles.shieldBackdrop}>
-            <View style={[styles.shieldRing, { width: 280, height: 280, transform: [{ rotate: '45deg' }] }]} />
-            <View style={[styles.shieldRing, { width: 220, height: 220, opacity: 0.15, transform: [{ rotate: '45deg' }] }]} />
-            <View style={styles.ambientSpotlight} />
-          </View>
-
-          <View style={styles.diamondContainer}>
+          <View style={styles.heroImageStack}>
+            {/* Background Diamond */}
             <LinearGradient
-              colors={Colors.gradientPrimary}
-              style={styles.diamondRim}
+              colors={Colors.gradientGold}
+              style={styles.heroDiamond}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
-            >
-              <View style={styles.diamondInner}>
-                <Image
-                  source={require('../assets/transparent-logo.png')}
-                  style={styles.heroLogo}
-                  contentFit="contain"
-                />
-              </View>
-            </LinearGradient>
+            />
+            
+            {/* Foreground White Square */}
+            <View style={styles.heroWhiteSquare}>
+              <Image
+                source={require('../assets/transparent-logo.png')}
+                style={styles.heroMainLogo}
+                contentFit="contain"
+              />
+            </View>
           </View>
 
           <Text style={styles.heroTitle}>Understand What{'\n'}You're Signing</Text>
@@ -88,12 +82,14 @@ export default function HomeScreen() {
               style={styles.ctaPressable}
             >
               <LinearGradient
-                colors={Colors.gradientPrimary}
+                colors={Colors.gradientGold}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.ctaGradient}
               >
-                <MaterialCommunityIcons name="shield-search" size={22} color={Colors.textOnPrimary} style={{ marginRight: 10 }} />
+                <View style={styles.ctaIconContainer}>
+                  <MaterialCommunityIcons name="shield-check" size={16} color={Colors.primaryDark} />
+                </View>
                 <Text style={styles.ctaText}>Analyze Document</Text>
               </LinearGradient>
             </Pressable>
@@ -117,12 +113,11 @@ export default function HomeScreen() {
         {/* Footer Info */}
         <View style={styles.footer}>
           <View style={styles.footerRow}>
-            <MaterialCommunityIcons name="shield-check-outline" size={16} color={Colors.textMuted} style={{ marginRight: 6 }} />
+            <MaterialCommunityIcons name="shield-check-outline" size={18} color={Colors.textMuted} style={{ marginRight: 8 }} />
             <Text style={styles.infoText}>
-              AI-Powered analysis helps you understand what you're signing.
+              AI-Powered analysis helps you understand what{'\n'}you're signing.
             </Text>
           </View>
-          <Text style={styles.infoText}>Protect yourself from unfair clauses.</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -134,96 +129,83 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  headerTitleContainer: {
+  customHeader: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: Spacing['2xl'],
   },
-  headerLogo: {
-    width: 32,
-    height: 32,
-    marginRight: 10,
+  headerLogoBox: {
+    width: 40,
+    height: 30,
+    backgroundColor: Colors.white,
     borderRadius: Radius.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: Spacing.md,
+  },
+  headerLogoImage: {
+    width: 24,
+    height: 24,
   },
   headerTitleText: {
-    ...Typography.headingLg,
-    color: Colors.text,
+    fontFamily: 'Inter_700Bold',
+    fontSize: 18,
+    color: Colors.white,
   },
   scrollContent: {
     padding: Spacing.xl,
     flexGrow: 1,
     justifyContent: 'center',
     paddingBottom: Spacing['4xl'],
-    marginTop: 20,
   },
 
   // Hero
   hero: {
     alignItems: 'center',
     marginBottom: Spacing['4xl'],
-    position: 'relative',
-    paddingTop: 40,
   },
-  shieldBackdrop: {
-    position: 'absolute',
-    top: -20,
+  heroImageStack: {
+    width: 260,
+    height: 260,
     alignItems: 'center',
     justifyContent: 'center',
-    width: '100%',
-    zIndex: -1,
-  },
-  shieldRing: {
-    position: 'absolute',
-    borderWidth: 1,
-    borderColor: Colors.primary,
-    opacity: 0.08,
-    borderRadius: Radius.lg,
-  },
-  ambientSpotlight: {
-    position: 'absolute',
-    width: 300,
-    height: 300,
-    borderRadius: 150,
-    backgroundColor: Colors.primary,
-    opacity: 0.03,
-  },
-  diamondContainer: {
-    width: 130,
-    height: 130,
-    transform: [{ rotate: '45deg' }],
     marginBottom: 48,
+    position: 'relative',
+  },
+  heroDiamond: {
+    position: 'absolute',
+    width: 180,
+    height: 180,
+    borderRadius: Radius.xl,
+    transform: [{ rotate: '45deg' }],
+  },
+  heroWhiteSquare: {
+    position: 'absolute',
+    width: 180,
+    height: 180,
+    backgroundColor: Colors.white,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
     ...Shadows.xl,
   },
-  diamondRim: {
-    flex: 1,
-    padding: 2,
-    borderRadius: Radius.xl,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  diamondInner: {
-    flex: 1,
-    width: '100%',
-    backgroundColor: '#F8F9FA', // Soft pearl/off-white
-    borderRadius: Radius.xl - 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    transform: [{ rotate: '-45deg' }],
-  },
-  heroLogo: {
-    width: 64,
-    height: 64,
+  heroMainLogo: {
+    width: 120,
+    height: 120,
   },
   heroTitle: {
-    ...Typography.displaySm,
+    fontFamily: 'Inter_700Bold',
+    fontSize: 32,
+    lineHeight: 40,
     textAlign: 'center',
     marginBottom: Spacing.md,
-    color: Colors.text,
+    color: Colors.white,
   },
   subtitle: {
-    ...Typography.body,
+    fontFamily: 'Inter_400Regular',
+    fontSize: 16,
     color: Colors.textSecondary,
     textAlign: 'center',
-    maxWidth: '85%',
     lineHeight: 24,
   },
 
@@ -251,13 +233,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
   },
+  ctaIconContainer: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: Colors.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
   ctaText: {
-    ...Typography.button,
+    fontFamily: 'Inter_700Bold',
+    fontSize: 18,
     color: Colors.textOnPrimary,
-    letterSpacing: 0.3,
   },
   helperText: {
-    ...Typography.caption,
+    fontFamily: 'Inter_400Regular',
+    fontSize: 14,
     color: Colors.textMuted,
   },
   linkButton: {
@@ -268,7 +260,8 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   linkText: {
-    ...Typography.label,
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 16,
     color: Colors.primary,
   },
 
@@ -277,15 +270,17 @@ const styles = StyleSheet.create({
     marginTop: 'auto',
     alignItems: 'center',
     paddingTop: Spacing.xl,
-    gap: 2,
   },
   footerRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   infoText: {
-    ...Typography.caption,
+    fontFamily: 'Inter_400Regular',
+    fontSize: 12,
     textAlign: 'center',
     color: Colors.textMuted,
+    lineHeight: 18,
   },
 });

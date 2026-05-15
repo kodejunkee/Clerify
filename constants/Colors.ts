@@ -7,16 +7,19 @@ export const Colors = {
   
   // Gradient Definitions
   gradientPrimary: ['#D4AF37', '#B8860B'] as [string, string],
+  gradientGold: ['#E6CD7B', '#D09E38'] as [string, string],
   gradientSubtle: ['#1A1A1A', '#050505'] as [string, string],
   gradientDark: ['#050505', '#121214'] as [string, string],
   gradientHeader: ['#2A2A2E', '#050505'] as [string, string], // Lush dark metallic
   gradientLight: ['#FFFFFF', '#F8FAFC'] as [string, string],
 
   // Backgrounds
-  background: '#050505',     // Deep midnight black
+  background: '#0A1120',     // Deep navy/black
+  backgroundLight: '#FFFFFF',
   surface: '#121214',        // Card surfaces
   surfaceElevated: '#1E1E20', // Inputs / Elevated cards
   surfaceSubtle: '#0A0A0B',  
+  cardDark: '#121622',       // Dark navy cards
   tabBar: '#121214',         
 
   // Text
